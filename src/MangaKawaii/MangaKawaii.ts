@@ -12,7 +12,7 @@ import {
     TagType,
     RequestHeaders
   } from "paperback-extensions-common"
-  import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, parseViewMore, searchMetadata } from "./MangaLifeParsing"
+  //import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, parseViewMore, searchMetadata } from "./MangaLifeParsing"
   
   export const ML_DOMAIN = 'https://www.mangakawaii.com/'
   const headers = { "content-type": "application/x-www-form-urlencoded" }
@@ -22,7 +22,7 @@ import {
     version: '2.1.8',
     name: 'MangaKawai',
     icon: 'icon.png',
-    author: 'Daerodomigue',
+    author: 'aerodomigue',
     authorWebsite: 'https://github.com/aerodomigue',
     description: 'Extension that pulls manga from Mangakawaii, includes Advanced Search and Updated manga fetching',
     hentaiSource: false,

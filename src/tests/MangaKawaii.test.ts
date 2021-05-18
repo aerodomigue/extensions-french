@@ -1,11 +1,11 @@
 import cheerio from 'cheerio'
 import { APIWrapper, Source } from 'paperback-extensions-common';
-import { MangaDex } from '../MangaDex/MangaDex';
+import { MangaLife } from '../MangaLife/MangaLife';
 
-describe('MangaDex Tests', function () {
+describe('Manga4Life Tests', function () {
 
     var wrapper: APIWrapper = new APIWrapper();
-    var source: Source = new MangaDex(cheerio);
+    var source: Source = new MangaLife(cheerio);
     var chai = require('chai'), expect = chai.expect, should = chai.should();
     var chaiAsPromised = require('chai-as-promised');
     chai.use(chaiAsPromised);
@@ -15,12 +15,11 @@ describe('MangaDex Tests', function () {
      * Try to choose a manga which is updated frequently, so that the historical checking test can 
      * return proper results, as it is limited to searching 30 days back due to extremely long processing times otherwise.
      */
-    const mangaId = '32d76d19-8a05-4db0-9fc2-e0b0648fe9d0' // Solo Leveling
+    var mangaId = "One-Piece";
 
     it("Retrieve Manga Details", async () => {
         let details = await wrapper.getMangaDetails(source, mangaId);
         expect(details, "No results found with test-defined ID [" + mangaId + "]").to.exist;
-        expect(details.id, "MangaId Changed").to.be.eql(mangaId);
 
         // Validate that the fields are filled
         let data = details;
@@ -35,19 +34,17 @@ describe('MangaDex Tests', function () {
 
     it("Get Chapters", async () => {
         let data = await wrapper.getChapters(source, mangaId);
-
         expect(data, "No chapters present for: [" + mangaId + "]").to.not.be.empty;
 
         let entry = data[0]
         expect(entry.id, "No ID present").to.not.be.empty;
-        expect(entry.mangaId, "MangaId Changed").to.be.eql(mangaId)
         expect(entry.time, "No date present").to.exist
         // expect(entry.name, "No title available").to.not.be.empty
         expect(entry.chapNum, "No chapter number present").to.exist
+        expect(entry.volume, "No volume data available").to.exist
     });
 
     it("Get Chapter Details", async () => {
-
         let chapters = await wrapper.getChapters(source, mangaId);
         let data = await wrapper.getChapterDetails(source, mangaId, chapters[0].id);
 
@@ -61,11 +58,11 @@ describe('MangaDex Tests', function () {
 
     it("Testing search", async () => {
         let testSearch = createSearchRequest({
-            title: 'Solo Leveling'
+            title: 'Boyfriend'
         });
 
-        let search = await wrapper.searchRequest(source, testSearch, {offset: 0});
-        let result = search.results[0]
+        let search = await wrapper.searchRequest(source, testSearch, 1);
+        let result = search.results[0];
 
         expect(result, "No response from server").to.exist;
 
@@ -78,16 +75,47 @@ describe('MangaDex Tests', function () {
     it("Testing Home-Page aquisition", async() => {
         let homePages = await wrapper.getHomePageSections(source)
         expect(homePages, "No response from server").to.exist
-        expect(homePages[0], "No recently updated section available").to.exist
-        expect(homePages[1], "No updated shounen section available").to.exist
-        expect(homePages[2], "No updated action available").to.exist
-    });
+    })
 
-    it("Testing Notifications", async () => {
-        const updates = await wrapper.filterUpdatedManga(source, new Date("2021-05-01"), [mangaId]);
     
-        expect(updates, "No server response").to.exist;
-        expect(updates, "Empty server response").to.not.be.empty;
-        expect(updates[0].ids, "No updates").to.not.be.empty;
-    });
+    it("Testing home page results for hot titles", async() => {
+        let results = await wrapper.getViewMoreItems(source, "hot_update", {}, 1)
+
+        expect(results, "No results whatsoever for this section").to.exist
+        expect(results, "No results whatsoever for this section").to.exist
+        
+        let data = results![0]
+        expect(data.id, "No ID present").to.exist
+        expect(data.image, "No image present").to.exist
+        expect(data.title.text, "No title present").to.exist
+    })
+
+    
+    it("Testing home page results for latest titles", async() => {
+        let results = await wrapper.getViewMoreItems(source, "latest", {}, 1)
+        let resultsWithPagedData = await wrapper.getViewMoreItems(source, "latest", {}, 3)
+
+        expect(results, "No results whatsoever for this section").to.exist
+        expect(results, "No results whatsoever for this section").to.exist
+        
+        let data = results![0]
+        expect(data.id, "No ID present").to.exist
+        expect(data.image, "No image present").to.exist
+        expect(data.title.text, "No title present").to.exist
+    })
+
+    
+    it("Testing home page results for new titles", async() => {
+        let results = await wrapper.getViewMoreItems(source, "new_titles", {}, 1)
+        let resultsWithPagedData = await wrapper.getViewMoreItems(source, "new_titles", {}, 3)
+
+        expect(results, "No results whatsoever for this section").to.exist
+        expect(results, "No results whatsoever for this section").to.exist
+        
+        let data = results![0]
+        expect(data.id, "No ID present").to.exist
+        expect(data.image, "No image present").to.exist
+        expect(data.title.text, "No title present").to.exist
+    })
+
 })

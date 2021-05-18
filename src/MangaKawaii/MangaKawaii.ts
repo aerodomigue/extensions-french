@@ -18,7 +18,7 @@ import {
   const headers = { "content-type": "application/x-www-form-urlencoded" }
   const method = 'GET'
   
-  export const MangaLifeInfo: SourceInfo = {
+  export const MangaKawaiInfo: SourceInfo = {
     version: '2.1.8',
     name: 'MangaKawai',
     icon: 'icon.png',
@@ -39,7 +39,7 @@ import {
     ]
   }
   
-  export class MangaLife extends Source {
+  export class MangaKawai extends Source {
     getMangaShareUrl(mangaId: string): string | null { return `${ML_DOMAIN}/manga/${mangaId}` }
   
     async getMangaDetails(mangaId: string): Promise<Manga> {

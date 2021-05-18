@@ -12,6 +12,7 @@ import {
     TagType,
     RequestHeaders
   } from "paperback-extensions-common"
+  import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, parseViewMore, searchMetadata } from "./MangaKawaiiParsing"
   
   export const ML_DOMAIN = 'https://www.mangakawaii.com/'
   const headers = { "content-type": "application/x-www-form-urlencoded" }

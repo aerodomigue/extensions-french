@@ -1,11 +1,11 @@
 import cheerio from 'cheerio'
 import { APIWrapper, Source } from 'paperback-extensions-common';
-import { MangaLife } from '../MangaLife/MangaLife';
+import { MangaKawaii } from '../MangaKawaii/MangaKawaii';
 
 describe('Manga4Life Tests', function () {
 
     var wrapper: APIWrapper = new APIWrapper();
-    var source: Source = new MangaLife(cheerio);
+    var source: Source = new MangaKawaii(cheerio);
     var chai = require('chai'), expect = chai.expect, should = chai.should();
     var chaiAsPromised = require('chai-as-promised');
     chai.use(chaiAsPromised);

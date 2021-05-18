@@ -18,9 +18,9 @@ import {
   const headers = { "content-type": "application/x-www-form-urlencoded" }
   const method = 'GET'
   
-  export const MangaKawaiInfo: SourceInfo = {
+  export const MangaKawaiiInfo: SourceInfo = {
     version: '2.1.8',
-    name: 'MangaKawai',
+    name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
     authorWebsite: 'https://github.com/aerodomigue',
@@ -39,7 +39,7 @@ import {
     ]
   }
   
-  export class MangaKawai extends Source {
+  export class MangaKawaii extends Source {
     getMangaShareUrl(mangaId: string): string | null { return `${ML_DOMAIN}/manga/${mangaId}` }
   
     async getMangaDetails(mangaId: string): Promise<Manga> {

@@ -109,7 +109,7 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
         time
       }))
     }
-
+    console.log(mangaId)
     return chapters;
 }
 
@@ -131,7 +131,7 @@ export const parseChapterDetails = (data: any, mangaId: string, chapterId: strin
       const page = s.substr(s.length - 3)
       pages.push(`https://${matchedPath}/manga/${mangaId}/${chapterInfo.Directory == '' ? '' : chapterInfo.Directory + '/'}${chapterImage}-${page}.png`)
     }
-
+    console.log(mangaId)
     return createChapterDetails({
       id: chapterId,
       mangaId: mangaId,

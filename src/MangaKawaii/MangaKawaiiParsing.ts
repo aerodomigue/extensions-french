@@ -83,15 +83,14 @@ export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId
     const nbrChap = chapterId.split('/')
     const chapter = Number( nbrChap ? nbrChap[2] : 0 )
 
-    console.log($.root().html())
     const urlPageArray =  $('div[id="all3"] img').map((i, x) => $(x).attr('data-src')).toArray()
 
     for (const page of urlPageArray) {
         pages.push(`${page}`)
     }
-
+    console.log(nbrChap[2])
     return createChapterDetails({
-      id: chapterId,
+      id: nbrChap[2],
       mangaId: mangaId,
       pages, longStrip: false
     })

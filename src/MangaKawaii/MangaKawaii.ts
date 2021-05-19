@@ -86,7 +86,6 @@ import {
     }
   
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
-      console.log(mangaId + "  |  " + chapterId)
       const request = createRequestObject({
         url: `${ML_DOMAIN}/manga`,
         headers : this.constructHeaders({}),

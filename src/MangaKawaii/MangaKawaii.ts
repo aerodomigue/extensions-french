@@ -52,7 +52,7 @@ import {
       const request = createRequestObject({
         url: `${ML_DOMAIN}/manga/`,
         method,
-        //param: mangaId
+        param: mangaId
       })
       const response = await this.requestManager.schedule(request, 1)
       let $ = this.cheerio.load(response.data)

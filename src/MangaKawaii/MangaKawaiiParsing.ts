@@ -1,4 +1,5 @@
 import { Chapter, ChapterDetails, HomeSection, LanguageCode, Manga, MangaStatus, MangaTile, MangaUpdates, PagedResults, SearchRequest, TagSection } from "paperback-extensions-common"
+import { title } from "process"
 
 let ML_IMAGE_DOMAIN = 'https://cover.mangabeast01.com/cover'
 
@@ -119,13 +120,12 @@ export const searchMetadata = (query: SearchRequest) => {
 export const parseSearch = ($: CheerioStatic, metadata: any, CDN_URL: string, ML_DOMAIN: string): PagedResults => {
     const mangaTiles: MangaTile[] = []
     const titles = $('h1 + ul a[href*=manga]').toArray().map((elem) => {return $(elem).attr('href') })
-    console.log(titles)
 
     for (const elem of titles) {
             mangaTiles.push(createMangaTile({
-                id: `${ML_DOMAIN}${titles}`,
-                title: createIconText({ text: "test" }),
-                image: `${CDN_URL}/uploads${titles}/cover/cover_250x350.jpg`,
+                id: `${ML_DOMAIN}${elem}`,
+                title: createIconText({ text: $('h1 + ul a[href*="' + elem +'"]').text() }),
+                image: `${CDN_URL}/uploads${elem}/cover/cover_250x350.jpg`,
             }))
     }
 

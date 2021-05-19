@@ -35,7 +35,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string
 
     return createManga({
         id: mangaId,
-        titles : ['v5'],
+        titles : ['v7'],
         image ,
         status ,
         author ,

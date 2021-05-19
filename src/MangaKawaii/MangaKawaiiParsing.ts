@@ -39,7 +39,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
 
     return createManga({
         id: mangaId,
-        titles : ["test"],
+        titles : ["testv2"],
         image : 'https://cdn.mangakawaii.com/uploads/manga/one-piece/cover/cover_250x350.jpg',
         status,
         author,

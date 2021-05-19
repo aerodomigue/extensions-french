@@ -41,7 +41,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string
         titles : ["testv2"],
         image : 'https://cdn.mangakawaii.com/uploads/manga/one-piece/cover/cover_250x350.jpg',
         status,
-        author : "v3",
+        author : "v4",
         //tags: tagSections,
         desc : url ,
         hentai: false,

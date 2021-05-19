@@ -20,7 +20,7 @@ import {
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: '0.1.6',
+    version: '0.1.7',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -40,10 +40,9 @@ import {
     ]
   }
 
-  let userAgentRandomizer: string = `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/78.0${Math.floor(Math.random() * 100000)}`
-
   export class MangaKawaii extends Source {
     getMangaShareUrl(mangaId: string): string | null { return `${ML_DOMAIN}/manga/${mangaId}` }
+    userAgentRandomizer: string = `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/78.0${Math.floor(Math.random() * 100000)}`
 
     requestManager = createRequestManager({
       requestsPerSecond: 1,
@@ -157,10 +156,10 @@ import {
     }
   
     globalRequestHeaders(): RequestHeaders {
-      if(userAgentRandomizer !== '') {
+      if(this.userAgentRandomizer !== '') {
           return {
               "referer": ML_DOMAIN,
-              "user-agent": userAgentRandomizer,
+              "user-agent": this.userAgentRandomizer,
           }
       }
       else {

@@ -19,6 +19,7 @@ describe('MangaKawaiTest Tests', function () {
 
     it("Retrieve Manga Details", async () => {
         let details = await wrapper.getMangaDetails(source, mangaId);
+        console.log(details)
         expect(details, "No results found with test-defined ID [" + mangaId + "]").to.exist;
 
         // Validate that the fields are filled

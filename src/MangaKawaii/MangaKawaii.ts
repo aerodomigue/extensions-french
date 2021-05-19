@@ -86,15 +86,17 @@ import {
     }
   
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
+      console.log(mangaId + "  |  " + chapterId)
       const request = createRequestObject({
-        url: `${ML_DOMAIN}/read-online/`,
+        url: `${ML_DOMAIN}/manga`,
         headers : this.constructHeaders({}),
         method,
         param: chapterId
       })
   
       const response = await this.requestManager.schedule(request, 1)
-      return parseChapterDetails(response.data, mangaId, chapterId);
+      const $ = this.cheerio.load(response.data)
+      return parseChapterDetails($, mangaId, chapterId, ML_DOMAIN)
     }
   
     async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void> {

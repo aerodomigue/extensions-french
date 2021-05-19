@@ -53,9 +53,9 @@ export const parseChapters = ($: CheerioStatic, mangaId: string,  url: string): 
 
     for (const elem of chaptersHTML) {
       //let nbrChap = $('td[class="table__chapter px-0 text-nowrap"]', elem).html()
-      const id = `${$('a[href*=manga]', elem).attr('href')}`
+      const id = `${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', '')
       const nbrChap = id.split('/')
-      const chapNum = Number( nbrChap ? nbrChap[3] : 0 )
+      const chapNum = Number( nbrChap ? nbrChap[2] : 0 )
       const name = $("td.table__chapter:has(span)", elem).text().trim()
       const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.')
       let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]))
@@ -72,23 +72,22 @@ export const parseChapters = ($: CheerioStatic, mangaId: string,  url: string): 
     return chapters;
 }
 
-export const parseChapterDetails = (data: any, mangaId: string, chapterId: string): ChapterDetails => {
+export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId: string, ML_DOMAIN: string): ChapterDetails => {
     const pages: string[] = []
 
-    const variableName = data.match(/ng-src="https:\/\/{{([a-zA-Z0-9.]+)}}\/manga\/.+\.png/)?.[1];
-    const matchedPath = data.match(new RegExp(`${variableName} = "(.*)";`))?.[1];
+    const chapterInfo = JSON.parse("{}")
+    const charNumPage = $('select[id="page-list"]').text().replace(/\t*\n*/g, '').split("Page").length - 1
+    const pageNum = Number(charNumPage)
 
-    const chapterInfo = JSON.parse(data.match(/vm.CurChapter = (.*);/)?.[1])
-    const pageNum = Number(chapterInfo.Page)
 
-    const chapter = chapterInfo.Chapter.slice(1, -1)
-    const odd = chapterInfo.Chapter[chapterInfo.Chapter.length - 1]
-    const chapterImage = odd == 0 ? chapter : chapter + '.' + odd
+    const nbrChap = chapterId.split('/')
+    const chapter = Number( nbrChap ? nbrChap[2] : 0 )
 
-    for (let i = 0; i < pageNum; i++) {
-      const s = '000' + (i + 1)
-      const page = s.substr(s.length - 3)
-      pages.push(`https://${matchedPath}/manga/${mangaId}/${chapterInfo.Directory == '' ? '' : chapterInfo.Directory + '/'}${chapterImage}-${page}.png`)
+    console.log($.root().html())
+    const urlPageArray =  $('div[id="all3"] img').map((i, x) => $(x).attr('data-src')).toArray()
+
+    for (const page of urlPageArray) {
+        pages.push(`${page}`)
     }
 
     return createChapterDetails({

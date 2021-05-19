@@ -46,7 +46,8 @@ describe('MangaKawaiTest Tests', function () {
 
     it("Get Chapter Details", async () => {
         let chapters = await wrapper.getChapters(source, mangaId);
-        let data = await wrapper.getChapterDetails(source, mangaId, chapters[0].id);
+        console.log(chapters)
+        let data = await wrapper.getChapterDetails(source, mangaId, chapters[3].id);
 
         expect(data, "No server response").to.exist;
         expect(data, "Empty server response").to.not.be.empty;

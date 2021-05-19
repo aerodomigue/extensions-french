@@ -128,7 +128,7 @@ export const parseSearch = ($: CheerioStatic, metadata: any, CDN_URL: string, ML
                 image: `${CDN_URL}/uploads${elem}/cover/cover_250x350.jpg`,
             }))
     }
-
+    console.log(mangaTiles)
     // This source parses JSON and never requires additional pages
     return createPagedResults({
         results: mangaTiles
@@ -144,5 +144,75 @@ export const parseTags = (data: any): TagSection[] => {
     tagSections[0].tags = genres.map((e: any) => createTag({ id: e, label: e }))
     tagSections[1].tags = types.map((e: any) => createTag({ id: e, label: e }))
     return tagSections
+}
 
+export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: (section: HomeSection) => void): void => {
+    const hotSection = createHomeSection({ id: 'hot_manga', title: 'HOT UPDATES', view_more: true })
+    const latestSection = createHomeSection({ id: 'latest', title: 'LATEST UPDATES', view_more: true })
+    const newTitlesSection = createHomeSection({ id: 'new_titles', title: 'NEW TITLES', view_more: true })
+    const recommendedSection = createHomeSection({ id: 'recommended', title: 'RECOMMENDATIONS', view_more: true })
+
+    const hot = JSON.parse((data.match(regex[hotSection.id])?.[1])).slice(0, 15)
+    const latest = JSON.parse((data.match(regex[latestSection.id])?.[1])).slice(0, 15)
+    const newTitles = JSON.parse((data.match(regex[newTitlesSection.id]))?.[1]).slice(0, 15)
+    const recommended = JSON.parse((data.match(regex[recommendedSection.id])?.[1]))
+
+    const sections = [hotSection]//, latestSection, newTitlesSection, recommendedSection]
+    const sectionData = [hot]//, latest, newTitles, recommended]
+
+    let imgSource = $('.ImageHolder').html()?.match(/ng-src="(.*)\//)?.[1] ?? ML_IMAGE_DOMAIN
+    if (imgSource !== ML_IMAGE_DOMAIN)
+        ML_IMAGE_DOMAIN = imgSource
+
+    for (const [i, section] of sections.entries()) {
+        sectionCallback(section)
+        const manga: MangaTile[] = []
+        for (const elem of sectionData[i]) {
+            const id = elem.IndexName
+            const title = elem.SeriesName
+            const image = `${ML_IMAGE_DOMAIN}/${id}.jpg`
+            let time = (new Date(elem.Date)).toDateString()
+            time = time.slice(0, time.length - 5)
+            time = time.slice(4, time.length)
+            manga.push(createMangaTile({
+                id,
+                image,
+                title: createIconText({ text: title }),
+                secondaryText: createIconText({ text: time, icon: 'clock.fill' })
+            }))
+        }
+        section.items = manga
+        sectionCallback(section)
+    }
+}
+
+export const parseViewMore = (data: any, homepageSectionId: string): PagedResults | null => {
+    const manga: MangaTile[] = []
+    const mangaIds: Set<string> = new Set<string>()
+
+    if (!regex[homepageSectionId]) return null
+    const items = JSON.parse((data.match(regex[homepageSectionId]))?.[1])
+    for (const item of items) {
+        const id = item.IndexName
+        if (!mangaIds.has(id)) {
+            const title = item.SeriesName
+            const image = `${ML_IMAGE_DOMAIN}/${id}.jpg`
+            let time = (new Date(item.Date)).toDateString()
+            time = time.slice(0, time.length - 5)
+            time = time.slice(4, time.length)
+
+            manga.push(createMangaTile({
+                id,
+                image,
+                title: createIconText({ text: title }),
+                secondaryText: homepageSectionId !== 'new_titles' ? createIconText({ text: time, icon: 'clock.fill' }) : undefined
+            }))
+            mangaIds.add(id)
+        }
+    }
+
+    // This source parses JSON and never requires additional pages
+    return createPagedResults({
+        results: manga
+    })
 }

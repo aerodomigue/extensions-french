@@ -1,4 +1,3 @@
-import { debug } from "console"
 import {
     Source,
     Manga,
@@ -21,7 +20,7 @@ import {
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: '0.1.4',
+    version: '0.1.5',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -40,7 +39,9 @@ import {
       }
     ]
   }
-  
+
+  let userAgentRandomizer: string = `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/78.0${Math.floor(Math.random() * 100000)}`
+
   export class MangaKawaii extends Source {
     getMangaShareUrl(mangaId: string): string | null { return `${ML_DOMAIN}/manga/${mangaId}` }
   
@@ -151,10 +152,24 @@ import {
     }
   
     globalRequestHeaders(): RequestHeaders {
-      return {
-        referer: ML_DOMAIN
+      if(userAgentRandomizer !== '') {
+          return {
+              "referer": ML_DOMAIN,
+              "user-agent": userAgentRandomizer,
+          }
       }
-    }
+      else {
+          return {
+              "referer": ML_DOMAIN,
+          }
+      }
+  }
+
+    CloudFlareError(status: any) {
+      if(status == 503) {
+          throw new Error('CLOUDFLARE BYPASS ERROR:\nPlease go to Settings > Sources > MangaKawaii and press Cloudflare Bypass')
+      }
+  }
   
     getCloudflareBypassRequest() {
       return createRequestObject({

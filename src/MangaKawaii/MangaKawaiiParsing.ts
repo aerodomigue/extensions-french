@@ -152,8 +152,8 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
     const titlesHot = $('div[class="hot-manga__item-name"]').toArray().map((elem) => {return $(elem).text()}).slice(0, 15)
     const urlImagesHot = $('a.hot-manga__item').toArray().map((elem) => {return $(elem).attr('href')}).slice(0, 15)
 
-    const titlesRecommanded = $('div[id="load_latest"] h4').toArray().map((elem) => {return $(elem).text()}).slice(0, 15)
-    const urlImagesRecommanded = $('div[id="load_latest"] h4 a').toArray().map((elem) => {return $(elem).attr('href')}).slice(0, 15)
+    const titlesRecommanded = $('div[id="load_latest"] h4').toArray().map((elem) => {return $(elem).text()}).slice(0, 35)
+    const urlImagesRecommanded = $('div[id="load_latest"] h4 a').toArray().map((elem) => {return $(elem).attr('href')}).slice(0, 35)
 
     console.log(urlImagesRecommanded)
 
@@ -198,32 +198,33 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
 }
 
 export const parseViewMore = (data: any, homepageSectionId: string): PagedResults | null => {
-    const manga: MangaTile[] = []
-    const mangaIds: Set<string> = new Set<string>()
-    if (!regex[homepageSectionId]) return null
-    const items = JSON.parse((data.match(regex[homepageSectionId]))?.[1])
+    //const manga: MangaTile[] = []
+    //const mangaIds: Set<string> = new Set<string>()
+    //if (!regex[homepageSectionId]) return null
+    //const items = JSON.parse((data.match(regex[homepageSectionId]))?.[1])
     
-    for (const item of items) {
-        const id = item.IndexName
-        if (!mangaIds.has(id)) {
-            const title = item.SeriesName
-            const image = `${CDN_URL}/${id}.jpg`
-            let time = (new Date(item.Date)).toDateString()
-            time = time.slice(0, time.length - 5)
-            time = time.slice(4, time.length)
+    //for (const item of items) {
+    //    const id = item.IndexName
+    //    if (!mangaIds.has(id)) {
+    //        const title = item.SeriesName
+    //        const image = `${CDN_URL}/${id}.jpg`
+    //        let time = (new Date(item.Date)).toDateString()
+    //        time = time.slice(0, time.length - 5)
+    //        time = time.slice(4, time.length)
 
-            manga.push(createMangaTile({
-                id,
-                image,
-                title: createIconText({ text: title }),
-                secondaryText: homepageSectionId !== 'new_titles' ? createIconText({ text: time, icon: 'clock.fill' }) : undefined
-            }))
-            mangaIds.add(id)
-        }
-    }
+    //        manga.push(createMangaTile({
+    //            id,
+    //            image,
+    //           title: createIconText({ text: title }),
+    //            secondaryText: homepageSectionId !== 'new_titles' ? createIconText({ text: time, icon: 'clock.fill' }) : undefined
+    //        }))
+    //        mangaIds.add(id)
+    //    }
+    //}
 
     // This source parses JSON and never requires additional pages
-    return createPagedResults({
-        results: manga
-    })
+    //return createPagedResults({
+    //   results: manga
+    //})
+    return null
 }

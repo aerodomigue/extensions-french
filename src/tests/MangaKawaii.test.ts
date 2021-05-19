@@ -89,7 +89,6 @@ describe('MangaKawaiTest Tests', function () {
         expect(data.image, "No image present").to.exist
         expect(data.title.text, "No title present").to.exist
     })
-
     
     //it("Testing home page results for latest titles", async() => {
     //    let results = await wrapper.getViewMoreItems(source, "latest", {}, 1)

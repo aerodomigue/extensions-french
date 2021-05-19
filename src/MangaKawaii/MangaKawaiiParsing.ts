@@ -17,35 +17,35 @@ export const regex: RegexIdMatch = {
 }
 
 export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
-    //const json = $('[type=application\\/ld\\+json]').next().html()?.replace(/\t*\n*/g, '') ?? '' // next, get second child  
-    //const parsedJson = JSON.parse(json)
-    //const entity = parsedJson['@graph']
-    //const desc = entity[1]['description']
-    //const image = entity[0]['url']
-    //console.log(image)
-    //const titles = entity[1]['name']
-    //const author = $('span[itemprop="author"]').text()
-    //const rating = Number($('strong[id="avgrating"]').text())
+    const json = $('[type=application\\/ld\\+json]').next().html()?.replace(/\t*\n*/g, '') ?? '' // next, get second child  
+    const parsedJson = JSON.parse(json)
+    const entity = parsedJson['@graph']
+    const desc = entity[1]['description']
+    const image = entity[0]['url']
+    console.log(entity)
+    const titles = [entity[1]['name']]
+    const author = $('span[itemprop="author"]').text()
+    const rating = Number($('strong[id="avgrating"]').text())
 
     //const tagSections: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: [] }),
     //createTagSection({ id: '1', label: 'format', tags: [] })]
     //tagSections[0].tags = $('a[itemprop="genre"]').toArray().map((elem) => createTag({ id: $(elem).text(), label: $(elem).text() }))
     //const lastUpdate = $('td[class="table__date.small"]').text()
 
-    //let status = MangaStatus.ONGOING
-    //status = $('.row').text().includes('En Cours') ? MangaStatus.ONGOING : MangaStatus.COMPLETED
+    let status = MangaStatus.ONGOING
+    status = $('.row').text().includes('En Cours') ? MangaStatus.ONGOING : MangaStatus.COMPLETED
     
 
     return createManga({
         id: mangaId,
-        titles : ["test"],
-        image : "https://cdn.mangakawaii.com/uploads/manga/one-piece/cover/cover_250x350.jpg",
-        status : MangaStatus.ONGOING,
-        author : "pas moi",
+        titles,
+        image ,
+        status ,
+        author ,
         //tags: tagSections,
-        desc : "ceci est un test",
+        desc ,
         hentai: false,
-        rating : 0,
+        rating ,
         lastUpdate: ""
     })
 }

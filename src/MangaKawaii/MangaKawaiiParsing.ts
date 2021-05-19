@@ -16,14 +16,14 @@ export const regex: RegexIdMatch = {
 }
 
 export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string): Manga => {
-    const json = $('[type=application\\/ld\\+json]').last().html() ?? '{}' // next, get second child  
+    const json = $('[type=application\\/ld\\+json]').last().html() ?? '' // next, get second child  
     console.log(json)
     const parsedJson = JSON.parse(json)
-    //const entity = parsedJson['@graph'] ?? ""
-    //const desc = entity[1]['description'] ?? ""
-    //const image = entity[0]['url'] ?? ""
-    //console.log(entity)
-    //const titles = [entity[1]['name']] ?? [""]
+    const entity = parsedJson['@graph']
+    const desc = entity[1]['description']
+    const image = entity[0]['url']
+    console.log(entity)
+    const titles = [entity[1]['name']] ?? [""]
     const author = $('span[itemprop="author"]').text()
     const rating = Number($('strong[id="avgrating"]').text())
 
@@ -38,10 +38,10 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string
 
     return createManga({
         id: mangaId,
-        titles : ["testv"],
-        image : 'https://cdn.mangakawaii.com/uploads/manga/one-piece/cover/cover_250x350.jpg',
-        status,
-        author : "v6",
+        titles ,
+        image ,
+        status ,
+        author ,
         //tags: tagSections,
         desc : json ,
         hentai: false,

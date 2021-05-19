@@ -159,7 +159,7 @@ import {
       if(this.userAgentRandomizer !== '') {
           return {
               "referer": ML_DOMAIN,
-              "user-agent": this.userAgentRandomizer,
+              //"user-agent": this.userAgentRandomizer,
           }
       }
       else {

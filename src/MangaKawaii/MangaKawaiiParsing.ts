@@ -17,16 +17,16 @@ export const regex: RegexIdMatch = {
 }
 
 export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
-    const json = $('[type=application\\/ld\\+json]').last().html()?.replace(/\t*\n*/g, '') ?? '{}' // next, get second child  
+    const json = $('[type=application\\/ld\\+json]').last().html() ?? '{}' // next, get second child  
     console.log(json)
-    //const parsedJson = JSON.parse(json)
-    //const entity = parsedJson['@graph']
-    //const desc = entity[1]['description']
-    //const image = entity[0]['url']
+    const parsedJson = JSON.parse(json)
+    //const entity = parsedJson['@graph'] ?? ""
+    //const desc = entity[1]['description'] ?? ""
+    //const image = entity[0]['url'] ?? ""
     //console.log(entity)
-    //const titles = [entity[1]['name']]
-    //const author = $('span[itemprop="author"]').text()
-    //const rating = Number($('strong[id="avgrating"]').text())
+    //const titles = [entity[1]['name']] ?? [""]
+    const author = $('span[itemprop="author"]').text()
+    const rating = Number($('strong[id="avgrating"]').text())
 
     //const tagSections: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: [] }),
     //createTagSection({ id: '1', label: 'format', tags: [] })]
@@ -41,12 +41,12 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
         id: mangaId,
         titles : ["test"],
         image : 'https://cdn.mangakawaii.com/uploads/manga/one-piece/cover/cover_250x350.jpg',
-        status : MangaStatus.ONGOING,
-        author : " pas moi",
+        status,
+        author,
         //tags: tagSections,
         desc : json ,
         hentai: false,
-        rating : 0,
+        rating,
         lastUpdate: ""
     })
 }

@@ -41,7 +41,7 @@ import {
 
   export class MangaKawaii extends Source {
     getMangaShareUrl(mangaId: string): string | null { return `${ML_DOMAIN}/manga/${mangaId}` }
-    userAgentRandomizer: string = `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/78.0${Math.floor(Math.random() * 100000)}`
+    userAgent: string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/8$userAgentRandomizer1.0.4$userAgentRandomizer3.1$userAgentRandomizer2 Safari/537.36"
 
     requestManager = createRequestManager({
       requestsPerSecond: 1,
@@ -155,8 +155,8 @@ import {
     }
 
     constructHeaders(headers: any, refererPath?: string): any {
-      if(this.userAgentRandomizer !== '') {
-          headers["user-agent"] = this.userAgentRandomizer
+      if(this.userAgent !== '') {
+          headers["user-agent"] = this.userAgent
       }
       headers["referer"] = `${ML_DOMAIN}${refererPath ?? ''}`
       headers["content-type"] = "application/x-www-form-urlencoded"
@@ -164,10 +164,10 @@ import {
   }
   
     globalRequestHeaders(): RequestHeaders {
-      if(this.userAgentRandomizer !== '') {
+      if(this.userAgent !== '') {
           return {
               "referer": ML_DOMAIN,
-              "user-agent": this.userAgentRandomizer,
+              "user-agent": this.userAgent,
           }
       }
       else {

@@ -144,13 +144,18 @@ export const parseTags = (data: any): TagSection[] => {
 }
 
 export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: (section: HomeSection) => void): void => {
-    const hotSection = createHomeSection({ id: 'hot_manga', title: 'HOT UPDATES', view_more: true })
+    const hotSection = createHomeSection({ id: 'hot_manga', title: 'TOP HITS', view_more: true })
     const latestSection = createHomeSection({ id: 'latest', title: 'LATEST UPDATES', view_more: true })
     const newTitlesSection = createHomeSection({ id: 'new_titles', title: 'NEW TITLES', view_more: true })
     const recommendedSection = createHomeSection({ id: 'recommended', title: 'RECOMMENDATIONS', view_more: true })
 
     const titlesHot = $('div[class="hot-manga__item-name"]').toArray().map((elem) => {return $(elem).text()}).slice(0, 15)
     const urlImagesHot = $('a.hot-manga__item').toArray().map((elem) => {return $(elem).attr('href')}).slice(0, 15)
+
+    const titlesRecommanded = $('div[id="load_latest"] h4').toArray().map((elem) => {return $(elem).text()}).slice(0, 15)
+    const urlImagesRecommanded = $('div[id="load_latest"] h4 a').toArray().map((elem) => {return $(elem).attr('href')}).slice(0, 15)
+
+    console.log(urlImagesRecommanded)
 
     let dictHot = [] 
     for (let index = 0; index < titlesHot.length; index++) {
@@ -159,12 +164,21 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
             url: urlImagesHot[index]
         });
     }
+
+    let dictLaster = [] 
+    for (let index = 0; index < titlesHot.length; index++) {
+        dictLaster.push({
+            title: titlesRecommanded[index],
+            url: urlImagesRecommanded[index]
+        });
+    }
+
     //const latest = JSON.parse((data.match(regex[latestSection.id])?.[1])).slice(0, 15)
     //const newTitles = JSON.parse((data.match(regex[newTitlesSection.id]))?.[1]).slice(0, 15)
     //const recommended = JSON.parse((data.match(regex[recommendedSection.id])?.[1]))
 
-    const sections = [hotSection]//, latestSection, newTitlesSection, recommendedSection]
-    const sectionData = [dictHot]//, latest, newTitles, recommended]
+    const sections = [hotSection, latestSection]//, latestSection, newTitlesSection]
+    const sectionData = [dictHot, dictLaster]//, latest, newTitles]
 
     for (const [i, section] of sections.entries()) {
         sectionCallback(section)
@@ -179,7 +193,6 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
                 title: createIconText({ text: title })}))
         }
         section.items = manga
-        console.log(manga)
         sectionCallback(section)
     }
 }

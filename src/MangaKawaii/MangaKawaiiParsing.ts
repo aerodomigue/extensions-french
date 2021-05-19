@@ -170,7 +170,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
         sectionCallback(section)
         const manga: MangaTile[] = []
         for (const elem of sectionData[i]) {
-            const id = `${elem.url?.replace('/manga', '') ?? ''}`
+            const id = `${elem.url?.replace('/manga/', '') ?? ''}`
             const title = elem.title
             const image = `${CDN_URL}/uploads${elem.url}/cover/cover_250x350.jpg`
             manga.push(createMangaTile({
@@ -179,6 +179,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
                 title: createIconText({ text: title })}))
         }
         section.items = manga
+        console.log(manga)
         sectionCallback(section)
     }
 }

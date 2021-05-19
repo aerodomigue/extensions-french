@@ -131,7 +131,6 @@ export const parseChapterDetails = (data: any, mangaId: string, chapterId: strin
       const page = s.substr(s.length - 3)
       pages.push(`https://${matchedPath}/manga/${mangaId}/${chapterInfo.Directory == '' ? '' : chapterInfo.Directory + '/'}${chapterImage}-${page}.png`)
     }
-    console.log(mangaId)
     return createChapterDetails({
       id: chapterId,
       mangaId: mangaId,
@@ -270,6 +269,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
             }))
         }
         section.items = manga
+        console.log(manga)
         sectionCallback(section)
     }
 }
@@ -277,7 +277,6 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
 export const parseViewMore = (data: any, homepageSectionId: string): PagedResults | null => {
     const manga: MangaTile[] = []
     const mangaIds: Set<string> = new Set<string>()
-    console.log(data)
     if (!regex[homepageSectionId]) return null
     const items = JSON.parse((data.match(regex[homepageSectionId]))?.[1])
     for (const item of items) {

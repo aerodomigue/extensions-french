@@ -14,12 +14,12 @@ import {
   } from "paperback-extensions-common"
   import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, parseViewMore, searchMetadata } from "./MangaKawaiiParsing"
   
-  export const ML_DOMAIN = 'https://www.mangakawaii.com/'
+  export const ML_DOMAIN = 'https://www.mangakawaii.com'
   const headers = { "content-type": "application/x-www-form-urlencoded" }
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: '2.1.8',
+    version: '0.1.3',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -48,7 +48,6 @@ import {
         method,
         param: mangaId
       })
-  
       const response = await this.requestManager.schedule(request, 1)
       let $ = this.cheerio.load(response.data)
       return parseMangaDetails($, mangaId)
@@ -62,9 +61,22 @@ import {
         param: mangaId
       })
   
-      const response = await this.requestManager.schedule(request, 1)
+      let response = await this.requestManager.schedule(request, 1)
+      const re = RegExp('[\'"](/arrilot/load-widget.*?)[\'"]')
+      const chapterRequest = response.data.match(re)
+      let url = ""
+      if(chapterRequest)
+        {
+          url = `${ML_DOMAIN}${chapterRequest[1]}`
+          const request = createRequestObject({
+            url: `${ML_DOMAIN}${chapterRequest[1]}`,
+            method,
+            headers,
+            })
+          response = await this.requestManager.schedule(request, 1)
+        }
       const $ = this.cheerio.load(response.data)
-      return parseChapters($, mangaId)
+      return parseChapters($, mangaId, url)
     }
   
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {

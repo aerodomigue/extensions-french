@@ -16,96 +16,55 @@ export const regex: RegexIdMatch = {
 }
 
 export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
-    const json = $('[type=application\\/ld\\+json]').html()?.replace(/\t*\n*/g, '') ?? ''
-
-    // this is only because they added some really jank alternate titles and didn't propely string escape
-    const jsonWithoutAlternateName = json.replace(/"alternateName".*?],/g, '')
-    const alternateNames = /"alternateName": \[(.*?)\]/.exec(json)?.[1]
-      .replace(/\"/g, '')
-      .split(',')
-    const parsedJson = JSON.parse(jsonWithoutAlternateName)
-    const entity = parsedJson.mainEntity
-    const info = $('.row')
-    const imgSource = $('.ImgHolder').html()?.match(/src="(.*)\//)?.[1] ?? ML_IMAGE_DOMAIN
-    if (imgSource !== ML_IMAGE_DOMAIN)
-      ML_IMAGE_DOMAIN = imgSource
-    const image = `${ML_IMAGE_DOMAIN}/${mangaId}.jpg`
-    const title = $('h1', info).first().text() ?? ''
-    let titles = [title]
-    const author = entity.author[0]
-    titles = titles.concat(alternateNames ?? '')
-    const follows = Number($.root().html()?.match(/vm.NumSubs = (.*);/)?.[1])
+    const json = $('[type=application\\/ld\\+json]').next().html()?.replace(/\t*\n*/g, '') ?? '' // next, get second child  
+    const parsedJson = JSON.parse(json)
+    const entity = parsedJson['@graph']
+    const desc = entity[1]['description']
+    const image = entity[0]['url']
+    const titles = entity[1]['name']
+    const author = $('span[itemprop="author"]').text()
+    const rating = Number($('strong[id="avgrating"]').text())
 
     const tagSections: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: [] }),
     createTagSection({ id: '1', label: 'format', tags: [] })]
-    tagSections[0].tags = entity.genre.map((elem: string) => createTag({ id: elem, label: elem }))
-    const lastUpdate = entity.dateModified
+    //tagSections[0].tags = $('a[itemprop="genre"]').toArray().map((elem) => createTag({ id: $(elem).text(), label: $(elem).text() }))
+    //const lastUpdate = $('td[class="table__date.small"]').text()
 
     let status = MangaStatus.ONGOING
-    let desc = ''
-    const hentai = entity.genre.includes('Hentai') || entity.genre.includes('Adult')
-
-    const details = $('.list-group', info)
-    for (const row of $('li', details).toArray()) {
-        const text = $('.mlabel', row).text()
-        switch (text) {
-            case 'Type:': {
-                const type = $('a', row).text()
-                tagSections[1].tags.push(createTag({ id: type.trim(), label: type.trim() }))
-                break
-            }
-            case 'Status:': {
-                status = $(row).text().includes('Ongoing') ? MangaStatus.ONGOING : MangaStatus.COMPLETED
-                break
-            }
-            case 'Description:': {
-                desc = $('div', row).text().trim()
-                break
-            }
-        }
-    }
+    status = $('.row').text().includes('En Cours') ? MangaStatus.ONGOING : MangaStatus.COMPLETED
+    
 
     return createManga({
         id: mangaId,
         titles,
         image,
-        rating: 0,
         status,
         author,
-        tags: tagSections,
+        //tags: tagSections,
         desc,
-        //hentai,
         hentai: false,
-        follows,
-        lastUpdate
+        rating,
+        //lastUpdate
     })
 }
 
-export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
-    const chapterJS: any[] = JSON.parse($.root().html()?.match(regex['chapters'])?.[1] ?? '').reverse()
+export const parseChapters = ($: CheerioStatic, mangaId: string,  url: string): Chapter[] => {
+    const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => {return $(elem) })
     const chapters: Chapter[] = []
-    // following the url encoding that the website uses, same variables too
-    for (const elem of chapterJS) {
-      const chapterCode: string = elem.Chapter
-      const volume = Number(chapterCode.substring(0, 1))
-      const index = volume != 1 ? '-index-' + volume : ''
-      const n = parseInt(chapterCode.slice(1, -1))
-      const a = Number(chapterCode[chapterCode.length - 1])
-      const m = a != 0 ? '.' + a : ''
-      const id = mangaId + '-chapter-' + n + m + index + '.html'
-      const chapNum = n + a * .1
-      const name = elem.ChapterName ? elem.ChapterName : '' // can be null
 
-      const timeStr = elem.Date.replace(/-/g, "/")
-      const time = new Date(timeStr)
+    for (const elem of chaptersHTML) {
+      const id = url;
+      const chapNum = Number($('td.table__chapter', elem).text().match(RegExp('([0-9]+)')) ?? 0)
+      const name = $("td.table__chapter:has(span)", elem).text().trim()
+      const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.')
+      let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]))
 
       chapters.push(createChapter({
         id,
         mangaId,
         name,
         chapNum,
-        volume,
-        langCode: LanguageCode.ENGLISH,
+        langCode: LanguageCode.FRENCH,
         time
       }))
     }
@@ -235,7 +194,7 @@ export const parseTags = (data: any): TagSection[] => {
 }
 
 export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: (section: HomeSection) => void): void => {
-    const hotSection = createHomeSection({ id: 'hot_update', title: 'HOT UPDATES', view_more: true })
+    const hotSection = createHomeSection({ id: 'hot_manga', title: 'HOT UPDATES', view_more: true })
     const latestSection = createHomeSection({ id: 'latest', title: 'LATEST UPDATES', view_more: true })
     const newTitlesSection = createHomeSection({ id: 'new_titles', title: 'NEW TITLES', view_more: true })
     const recommendedSection = createHomeSection({ id: 'recommended', title: 'RECOMMENDATIONS', view_more: true })
@@ -245,8 +204,8 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
     const newTitles = JSON.parse((data.match(regex[newTitlesSection.id]))?.[1]).slice(0, 15)
     const recommended = JSON.parse((data.match(regex[recommendedSection.id])?.[1]))
 
-    const sections = [hotSection, latestSection, newTitlesSection, recommendedSection]
-    const sectionData = [hot, latest, newTitles, recommended]
+    const sections = [hotSection]//, latestSection, newTitlesSection, recommendedSection]
+    const sectionData = [hot]//, latest, newTitles, recommended]
 
     let imgSource = $('.ImageHolder').html()?.match(/ng-src="(.*)\//)?.[1] ?? ML_IMAGE_DOMAIN
     if (imgSource !== ML_IMAGE_DOMAIN)

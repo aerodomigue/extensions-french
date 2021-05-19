@@ -69,6 +69,7 @@ export const parseChapters = ($: CheerioStatic, mangaId: string,  url: string): 
         time
       }))
     }
+    console.log(chapters);
     return chapters;
 }
 
@@ -88,12 +89,13 @@ export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId
     for (const page of urlPageArray) {
         pages.push(`${page}`)
     }
-    console.log(nbrChap[2])
-    return createChapterDetails({
-      id: nbrChap[2],
+    const chapterDetails = createChapterDetails({
+      id: chapterId,
       mangaId: mangaId,
       pages, longStrip: false
     })
+    console.log(chapterDetails)
+    return chapterDetails
 }
 
 export const parseUpdatedManga = ({ data }: any, time: Date, ids: string[]): MangaUpdates => {

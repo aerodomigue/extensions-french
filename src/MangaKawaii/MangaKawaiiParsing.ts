@@ -87,7 +87,7 @@ export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId
     const urlPageArray =  $('div[id="all3"] img').map((i, x) => $(x).attr('data-src')).toArray()
 
     for (const page of urlPageArray) {
-        pages.push(`https://cdn.mangakawaii.com/uploads/manga/isekai-meikyuu-de-harem-o/chapters_fr/22/01.jpg`)
+        pages.push(` https://cdn.mangakawaii.com/uploads/manga/isekai-meikyuu-de-harem-o/chapters_fr/22/01.jpg `)
     }
     const chapterDetails = createChapterDetails({
       id: chapterId,

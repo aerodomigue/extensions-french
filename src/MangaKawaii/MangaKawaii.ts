@@ -50,13 +50,13 @@ import {
   
     async getMangaDetails(mangaId: string): Promise<Manga> {
       const request = createRequestObject({
-        url: `https://www.mangakawaii.com/manga/one-piece`,
+        url: `${ML_DOMAIN}/manga/`,
         method,
         //param: mangaId
       })
       const response = await this.requestManager.schedule(request, 1)
       let $ = this.cheerio.load(response.data)
-      return parseMangaDetails($, mangaId)
+      return parseMangaDetails($, mangaId, `${ML_DOMAIN}/manga/`)
     }
   
     async getChapters(mangaId: string): Promise<Chapter[]> {

@@ -16,7 +16,7 @@ export const regex: RegexIdMatch = {
     'directory_image_host': /<img ng-src=\"(.*)\//
 }
 
-export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
+export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string): Manga => {
     const json = $('[type=application\\/ld\\+json]').last().html() ?? '{}' // next, get second child  
     console.log(json)
     const parsedJson = JSON.parse(json)
@@ -44,7 +44,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
         status,
         author,
         //tags: tagSections,
-        desc : json ,
+        desc : url ,
         hentai: false,
         rating,
         lastUpdate: ""

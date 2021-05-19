@@ -1,4 +1,5 @@
 import cheerio from 'cheerio'
+import { time } from 'console';
 import { APIWrapper, Source } from 'paperback-extensions-common';
 import { MangaKawaii } from '../MangaKawaii/MangaKawaii';
 

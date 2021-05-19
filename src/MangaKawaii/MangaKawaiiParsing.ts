@@ -38,14 +38,14 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
 
     return createManga({
         id: mangaId,
-        titles,
+        titles : ["test"],
         image ,
         status ,
-        author ,
+        author : " pas moi",
         //tags: tagSections,
-        desc ,
+        desc : "ce ci es euehczoe" ,
         hentai: false,
-        rating ,
+        rating : 0,
         lastUpdate: ""
     })
 }

@@ -176,7 +176,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
         sectionCallback(section)
         const manga: MangaTile[] = []
         for (const elem of sectionData[i]) {
-            const id = elem.title.replace('/manga', '')
+            const id = elem.title//.replace('/manga', '')
             const title = elem.title
             const image = `${CDN_URL}/uploads${elem.url}/cover/cover_250x350.jpg`
             manga.push(createMangaTile({

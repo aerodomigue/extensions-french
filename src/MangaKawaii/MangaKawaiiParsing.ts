@@ -17,7 +17,8 @@ export const regex: RegexIdMatch = {
 }
 
 export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
-    const json = $('[type=application\\/ld\\+json]').next().html()?.replace(/\t*\n*/g, '') ?? '' // next, get second child  
+    const json = $('[type=application\\/ld\\+json]').html()?.replace(/\t*\n*/g, '') ?? '{}' // next, get second child  
+    console.log(json)
     const parsedJson = JSON.parse(json)
     const entity = parsedJson['@graph']
     const desc = entity[1]['description']

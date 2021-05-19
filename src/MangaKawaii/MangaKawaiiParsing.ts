@@ -148,13 +148,9 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
     const latestSection = createHomeSection({ id: 'latest', title: 'LATEST UPDATES', view_more: true })
     const newTitlesSection = createHomeSection({ id: 'new_titles', title: 'NEW TITLES', view_more: true })
     const recommendedSection = createHomeSection({ id: 'recommended', title: 'RECOMMENDATIONS', view_more: true })
-    const titlesHot = $('div[class="hot-manga__item-name"]').toArray().map((elem) => {return $(elem).text()}).slice(0, 15)
-    console.log(titlesHot)
-    //const idsHot = $('div[class="hot-manga__item-name"]').toArray().map((elem) => {return $(elem).text()}).slice(0, 15)
-    //console.log(idsHot)
-    const urlImagesHot = $('a.hot-manga__item').toArray().map((elem) => {return $(elem).attr('href')}).slice(0, 15)
-    console.log(urlImagesHot)
 
+    const titlesHot = $('div[class="hot-manga__item-name"]').toArray().map((elem) => {return $(elem).text()}).slice(0, 15)
+    const urlImagesHot = $('a.hot-manga__item').toArray().map((elem) => {return $(elem).attr('href')}).slice(0, 15)
 
     let dictHot = [] 
     for (let index = 0; index < titlesHot.length; index++) {
@@ -163,7 +159,6 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
             url: urlImagesHot[index]
         });
     }
-    console.log(dictHot)
     //const latest = JSON.parse((data.match(regex[latestSection.id])?.[1])).slice(0, 15)
     //const newTitles = JSON.parse((data.match(regex[newTitlesSection.id]))?.[1]).slice(0, 15)
     //const recommended = JSON.parse((data.match(regex[recommendedSection.id])?.[1]))
@@ -171,12 +166,11 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
     const sections = [hotSection]//, latestSection, newTitlesSection, recommendedSection]
     const sectionData = [dictHot]//, latest, newTitles, recommended]
 
-    let imgSource = $('.ImageHolder').html()?.match(/ng-src="(.*)\//)?.[1] ?? CDN_URL
     for (const [i, section] of sections.entries()) {
         sectionCallback(section)
         const manga: MangaTile[] = []
         for (const elem of sectionData[i]) {
-            const id = elem.title//.replace('/manga', '')
+            const id = `${elem.url?.replace('/manga', '') ?? ''}`
             const title = elem.title
             const image = `${CDN_URL}/uploads${elem.url}/cover/cover_250x350.jpg`
             manga.push(createMangaTile({
@@ -190,6 +184,32 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
 }
 
 export const parseViewMore = (data: any, homepageSectionId: string): PagedResults | null => {
+    const manga: MangaTile[] = []
+    const mangaIds: Set<string> = new Set<string>()
+    if (!regex[homepageSectionId]) return null
+    const items = JSON.parse((data.match(regex[homepageSectionId]))?.[1])
+    
+    for (const item of items) {
+        const id = item.IndexName
+        if (!mangaIds.has(id)) {
+            const title = item.SeriesName
+            const image = `${CDN_URL}/${id}.jpg`
+            let time = (new Date(item.Date)).toDateString()
+            time = time.slice(0, time.length - 5)
+            time = time.slice(4, time.length)
+
+            manga.push(createMangaTile({
+                id,
+                image,
+                title: createIconText({ text: title }),
+                secondaryText: homepageSectionId !== 'new_titles' ? createIconText({ text: time, icon: 'clock.fill' }) : undefined
+            }))
+            mangaIds.add(id)
+        }
+    }
+
     // This source parses JSON and never requires additional pages
-    return null
+    return createPagedResults({
+        results: manga
+    })
 }

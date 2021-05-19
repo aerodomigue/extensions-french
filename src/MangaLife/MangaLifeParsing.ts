@@ -277,7 +277,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
 export const parseViewMore = (data: any, homepageSectionId: string): PagedResults | null => {
     const manga: MangaTile[] = []
     const mangaIds: Set<string> = new Set<string>()
-
+    console.log(data)
     if (!regex[homepageSectionId]) return null
     const items = JSON.parse((data.match(regex[homepageSectionId]))?.[1])
     for (const item of items) {

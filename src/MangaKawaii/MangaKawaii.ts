@@ -19,7 +19,7 @@ import {
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: '0.1.10',
+    version: '0.1.11',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',

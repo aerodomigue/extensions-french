@@ -26,7 +26,7 @@ import {
     icon: 'icon.png',
     author: 'aerodomigue',
     authorWebsite: 'https://github.com/aerodomigue',
-    description: 'Extension that pulls manga from Mangakawaii, includes Advanced Search and Updated manga fetching',
+    description: 'Extension that pulls manga from Mangakawaii, includes Search and Updated manga fetching',
     hentaiSource: false,
     websiteBaseURL: ML_DOMAIN,
     sourceTags: [

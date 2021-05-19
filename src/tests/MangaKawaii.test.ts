@@ -58,7 +58,7 @@ describe('MangaKawaiTest Tests', function () {
 
     it("Testing search", async () => {
         let testSearch = createSearchRequest({
-            title: 'Boyfriend'
+            title: 'Dr stone',
         });
 
         let search = await wrapper.searchRequest(source, testSearch, 1);

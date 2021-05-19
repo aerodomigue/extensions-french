@@ -1,3 +1,4 @@
+import { debug } from "console"
 import {
     Source,
     Manga,
@@ -15,6 +16,7 @@ import {
   import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, parseViewMore, searchMetadata } from "./MangaKawaiiParsing"
   
   export const ML_DOMAIN = 'https://www.mangakawaii.com'
+  export const CDN_URL = "https://cdn.mangakawaii.com"
   const headers = { "content-type": "application/x-www-form-urlencoded" }
   const method = 'GET'
   
@@ -106,14 +108,14 @@ import {
     async searchRequest(query: SearchRequest, _metadata: any): Promise<PagedResults> {
       const metadata = searchMetadata(query);
       const request = createRequestObject({
-        url: `${ML_DOMAIN}/directory/`,
-        metadata,
+        url: `${ML_DOMAIN}/search`,
         headers,
         method,
+        param: `?query=${metadata.query}&search_type=${metadata.search_type}`
       })
-  
       const response = await this.requestManager.schedule(request, 1)
-      return parseSearch(response.data, metadata)
+      const $ = this.cheerio.load(response.data)
+      return parseSearch($, metadata, CDN_URL, ML_DOMAIN)
     }
   
     async getTags(): Promise<TagSection[] | null> {

@@ -110,70 +110,23 @@ export const parseUpdatedManga = ({ data }: any, time: Date, ids: string[]): Man
 }
 
 export const searchMetadata = (query: SearchRequest) => {
-    let status = ""
-    switch (query.status) {
-        case 0: status = 'Completed'; break
-        case 1: status = 'Ongoing'; break
-        default: status = ''
-    }
-
-    const genre: string[] | undefined = query.includeGenre ?
-        (query.includeDemographic ? query.includeGenre.concat(query.includeDemographic) : query.includeGenre) :
-        query.includeDemographic
-    const genreNo: string[] | undefined = query.excludeGenre ?
-        (query.excludeDemographic ? query.excludeGenre.concat(query.excludeDemographic) : query.excludeGenre) :
-        query.excludeDemographic
-
     return {
-        'keyword': query.title?.toLowerCase(),
-        'author': query.author?.toLowerCase() || query.artist?.toLowerCase() || '',
-        'status': status?.toLowerCase() ?? '',
-        'type': query.includeFormat?.map((x) => x?.toLowerCase() ?? ''),
-        'genre': genre?.map((x) => x?.toLowerCase() ?? ''),
-        'genreNo': genreNo?.map((x) => x?.toLowerCase() ?? '')
+        'query': query.title?.toLowerCase(),
+        'search_type': "manga",
     }
 }
 
-export const parseSearch = (data: any, metadata: any): PagedResults => {
+export const parseSearch = ($: CheerioStatic, metadata: any, CDN_URL: string, ML_DOMAIN: string): PagedResults => {
     const mangaTiles: MangaTile[] = []
-    const directory: any[] = JSON.parse(data?.match(regex['directory'])?.[1] ?? '')['Directory']
-    const imgSource = data?.match(regex['directory_image_host'])?.[1] ?? ML_IMAGE_DOMAIN
-    if (imgSource !== ML_IMAGE_DOMAIN) ML_IMAGE_DOMAIN = imgSource
+    const titles = $('h1 + ul a[href*=manga]').toArray().map((elem) => {return $(elem).attr('href') })
+    console.log(titles)
 
-    for (const elem of directory) {
-        let mKeyword: boolean = typeof metadata.keyword !== 'undefined' ? false : true
-        let mAuthor: boolean = metadata.author !== '' ? false : true
-        let mStatus: boolean = metadata.status !== '' ? false : true
-        let mType: boolean = typeof metadata.type !== 'undefined' && metadata.type.length > 0 ? false : true
-        let mGenre: boolean = typeof metadata.genre !== 'undefined' && metadata.genre.length > 0 ? false : true
-        let mGenreNo: boolean = typeof metadata.genreNo !== 'undefined' ? true : false
-        if (!mKeyword) {
-            const allWords: string = [...(elem.al ?? []), elem.s ?? ''].join('||').toLowerCase()
-            mKeyword = allWords.includes(metadata.keyword)
-        }
-
-        if (!mAuthor) {
-            const authors: string = elem.a?.join('||').toLowerCase() ?? ''
-            if (authors.includes(metadata.author)) mAuthor = true
-        }
-
-        if (!mStatus) {
-            if ((elem.st == 'ongoing' && metadata.status == 'ongoing') || (elem.st != 'ongoing' && metadata.ss != 'ongoing')) mStatus = true
-        }
-
-        const flatG = elem.g?.join('||') ?? ''
-        if (!mType) mType = metadata.type.includes(elem.t)
-        if (!mGenre) mGenre = metadata.genre.every((i: string) => flatG.includes(i))
-        if (mGenreNo) mGenreNo = metadata.genreNo.every((i: string) => flatG.includes(i))
-
-        if (mKeyword && mAuthor && mStatus && mType && mGenre && !mGenreNo) {
+    for (const elem of titles) {
             mangaTiles.push(createMangaTile({
-                id: elem.i,
-                title: createIconText({ text: elem.s }),
-                image: `${ML_IMAGE_DOMAIN}/${elem.i}.jpg`,
-                subtitleText: createIconText({ text: elem.st })
+                id: `${ML_DOMAIN}${titles}`,
+                title: createIconText({ text: "test" }),
+                image: `${CDN_URL}/uploads${titles}/cover/cover_250x350.jpg`,
             }))
-        }
     }
 
     // This source parses JSON and never requires additional pages

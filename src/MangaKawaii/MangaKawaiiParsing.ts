@@ -17,12 +17,10 @@ export const regex: RegexIdMatch = {
 
 export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string): Manga => {
     const json = $('[type=application\\/ld\\+json]').last().html() ?? '' // next, get second child  
-    console.log(json)
     const parsedJson = JSON.parse(json)
     const entity = parsedJson['@graph']
     const desc = entity[1]['description']
     const image = entity[0]['url']
-    console.log(entity)
     const titles = [entity[1]['name']] ?? [""]
     const author = $('span[itemprop="author"]').text()
     const rating = Number($('strong[id="avgrating"]').text())
@@ -34,7 +32,6 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string
 
     let status = MangaStatus.ONGOING
     status = $('.row').text().includes('En Cours') ? MangaStatus.ONGOING : MangaStatus.COMPLETED
-    
 
     return createManga({
         id: mangaId,
@@ -55,11 +52,13 @@ export const parseChapters = ($: CheerioStatic, mangaId: string,  url: string): 
     const chapters: Chapter[] = []
 
     for (const elem of chaptersHTML) {
-      const id = url;
-      const chapNum = Number($('td.table__chapter', elem).text().match(RegExp('([0-9]+)')) ?? 0)
+      console.log($('td.table__chapter:has(span)', elem).text().match(RegExp('([0-9]+)')))
+      let nbrChap = $('td.table__chapter:has(span)', elem).text().match(RegExp('([0-9]+)'))
+      const chapNum = Number( nbrChap ? nbrChap[1] : 0)
       const name = $("td.table__chapter:has(span)", elem).text().trim()
       const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.')
       let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]))
+      const id = `/${mangaId}/${chapNum}`
 
       chapters.push(createChapter({
         id,
@@ -70,7 +69,7 @@ export const parseChapters = ($: CheerioStatic, mangaId: string,  url: string): 
         time
       }))
     }
-
+    console.log(chapters)
     return chapters;
 }
 
@@ -124,13 +123,11 @@ export const parseSearch = ($: CheerioStatic, metadata: any, CDN_URL: string, ML
 
     for (const elem of titles) {
             mangaTiles.push(createMangaTile({
-                //id: `${ML_DOMAIN}${elem}`,
                 id: `${elem}`.replace('/manga/', ''),
                 title: createIconText({ text: $('h1 + ul a[href*="' + elem +'"]').text() }),
                 image: `${CDN_URL}/uploads${elem}/cover/cover_250x350.jpg`,
             }))
     }
-    console.log(mangaTiles)
     // This source parses JSON and never requires additional pages
     return createPagedResults({
         results: mangaTiles

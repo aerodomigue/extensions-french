@@ -56,7 +56,7 @@ import {
       })
       const response = await this.requestManager.schedule(request, 1)
       let $ = this.cheerio.load(response.data)
-      return parseMangaDetails($, mangaId, `${ML_DOMAIN}/manga/`)
+      return parseMangaDetails($, mangaId, `${ML_DOMAIN}/manga/${mangaId}`)
     }
   
     async getChapters(mangaId: string): Promise<Chapter[]> {

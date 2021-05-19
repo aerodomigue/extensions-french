@@ -38,10 +38,10 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string
 
     return createManga({
         id: mangaId,
-        titles : ["testv2"],
+        titles : ["testv3"],
         image : 'https://cdn.mangakawaii.com/uploads/manga/one-piece/cover/cover_250x350.jpg',
         status,
-        author : "v4",
+        author : "v5",
         //tags: tagSections,
         desc : url ,
         hentai: false,
@@ -125,7 +125,7 @@ export const parseSearch = ($: CheerioStatic, metadata: any, CDN_URL: string, ML
     for (const elem of titles) {
             mangaTiles.push(createMangaTile({
                 //id: `${ML_DOMAIN}${elem}`,
-                id: `one-piece`,
+                id: `${elem}`.replace('/manga/', ''),
                 title: createIconText({ text: $('h1 + ul a[href*="' + elem +'"]').text() }),
                 image: `${CDN_URL}/uploads${elem}/cover/cover_250x350.jpg`,
             }))

@@ -38,12 +38,12 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string
 
     return createManga({
         id: mangaId,
-        titles : ["testv4"],
-        image : json,
+        titles : ["testv"],
+        image : 'https://cdn.mangakawaii.com/uploads/manga/one-piece/cover/cover_250x350.jpg',
         status,
-        author : "v5",
+        author : "v6",
         //tags: tagSections,
-        desc : url ,
+        desc : json ,
         hentai: false,
         rating,
         lastUpdate: ""

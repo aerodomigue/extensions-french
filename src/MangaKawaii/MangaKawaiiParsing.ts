@@ -124,7 +124,8 @@ export const parseSearch = ($: CheerioStatic, metadata: any, CDN_URL: string, ML
 
     for (const elem of titles) {
             mangaTiles.push(createMangaTile({
-                id: `${ML_DOMAIN}${elem}`,
+                //id: `${ML_DOMAIN}${elem}`,
+                id: `one-piece`,
                 title: createIconText({ text: $('h1 + ul a[href*="' + elem +'"]').text() }),
                 image: `${CDN_URL}/uploads${elem}/cover/cover_250x350.jpg`,
             }))

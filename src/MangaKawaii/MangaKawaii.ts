@@ -20,7 +20,7 @@ import {
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: '0.1.5',
+    version: '0.1.6',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -44,6 +44,11 @@ import {
 
   export class MangaKawaii extends Source {
     getMangaShareUrl(mangaId: string): string | null { return `${ML_DOMAIN}/manga/${mangaId}` }
+
+    requestManager = createRequestManager({
+      requestsPerSecond: 1,
+      requestTimeout: 15000,
+    })
   
     async getMangaDetails(mangaId: string): Promise<Manga> {
       const request = createRequestObject({

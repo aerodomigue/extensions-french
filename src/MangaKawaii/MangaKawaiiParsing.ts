@@ -22,12 +22,13 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
     const entity = parsedJson['@graph']
     const desc = entity[1]['description']
     const image = entity[0]['url']
+    console.log(image)
     const titles = entity[1]['name']
     const author = $('span[itemprop="author"]').text()
-    const rating = Number($('strong[id="avgrating"]').text())
+    //const rating = Number($('strong[id="avgrating"]').text())
 
-    const tagSections: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: [] }),
-    createTagSection({ id: '1', label: 'format', tags: [] })]
+    //const tagSections: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: [] }),
+    //createTagSection({ id: '1', label: 'format', tags: [] })]
     //tagSections[0].tags = $('a[itemprop="genre"]').toArray().map((elem) => createTag({ id: $(elem).text(), label: $(elem).text() }))
     //const lastUpdate = $('td[class="table__date.small"]').text()
 
@@ -44,8 +45,8 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
         //tags: tagSections,
         desc,
         hentai: false,
-        rating,
-        //lastUpdate
+        rating : 0,
+        lastUpdate: ""
     })
 }
 
@@ -112,7 +113,7 @@ export const parseUpdatedManga = ({ data }: any, time: Date, ids: string[]): Man
 
 export const searchMetadata = (query: SearchRequest) => {
     return {
-        'query': query.title?.toLowerCase(),
+        'query': query.title?.toLowerCase().split(' ').join('+'),
         'search_type': "manga",
     }
 }

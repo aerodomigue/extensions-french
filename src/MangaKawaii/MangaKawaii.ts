@@ -64,7 +64,7 @@ import {
         url: `${ML_DOMAIN}/manga/`,
         method,
         headers : this.constructHeaders({}),
-        param: mangaId
+        param: `${mangaId}/`
       })
   
       let response = await this.requestManager.schedule(request, 1)

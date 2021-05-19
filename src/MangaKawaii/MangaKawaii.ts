@@ -16,11 +16,10 @@ import {
   
   export const ML_DOMAIN = 'https://www.mangakawaii.com'
   export const CDN_URL = "https://cdn.mangakawaii.com"
-  const headers = { "content-type": "application/x-www-form-urlencoded" }
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: '0.1.9',
+    version: '0.1.10',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -64,7 +63,7 @@ import {
       const request = createRequestObject({
         url: `${ML_DOMAIN}/manga/`,
         method,
-        headers,
+        headers : this.constructHeaders({}),
         param: mangaId
       })
   
@@ -78,7 +77,7 @@ import {
           const request = createRequestObject({
             url: `${ML_DOMAIN}${chapterRequest[1]}`,
             method,
-            headers,
+            headers : this.constructHeaders({}),
             })
           response = await this.requestManager.schedule(request, 1)
         }
@@ -89,7 +88,7 @@ import {
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
       const request = createRequestObject({
         url: `${ML_DOMAIN}/read-online/`,
-        headers,
+        headers : this.constructHeaders({}),
         method,
         param: chapterId
       })
@@ -101,7 +100,7 @@ import {
     async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void> {
       const request = createRequestObject({
         url: `${ML_DOMAIN}/`,
-        headers,
+        headers : this.constructHeaders({}),
         method,
       })
   
@@ -114,7 +113,7 @@ import {
       const metadata = searchMetadata(query);
       const request = createRequestObject({
         url: `${ML_DOMAIN}/search`,
-        headers,
+        headers : this.constructHeaders({}),
         method,
         param: `?query=${metadata.query}&search_type=${metadata.search_type}`
       })
@@ -127,7 +126,7 @@ import {
       const request = createRequestObject({
         url: `${ML_DOMAIN}/search/`,
         method,
-        headers,
+        headers : this.constructHeaders({}),
       })
   
       const response = await this.requestManager.schedule(request, 1)
@@ -154,12 +153,21 @@ import {
       const response = await this.requestManager.schedule(request, 1)
       return parseViewMore(response.data, homepageSectionId);
     }
+
+    constructHeaders(headers: any, refererPath?: string): any {
+      if(this.userAgentRandomizer !== '') {
+          headers["user-agent"] = this.userAgentRandomizer
+      }
+      headers["referer"] = `${ML_DOMAIN}${refererPath ?? ''}`
+      headers["content-type"] = "application/x-www-form-urlencoded"
+      return headers
+  }
   
     globalRequestHeaders(): RequestHeaders {
       if(this.userAgentRandomizer !== '') {
           return {
               "referer": ML_DOMAIN,
-              //"user-agent": this.userAgentRandomizer,
+              "user-agent": this.userAgentRandomizer,
           }
       }
       else {

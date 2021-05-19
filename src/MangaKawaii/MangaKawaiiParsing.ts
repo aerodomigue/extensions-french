@@ -1,5 +1,4 @@
 import { Chapter, ChapterDetails, HomeSection, LanguageCode, Manga, MangaStatus, MangaTile, MangaUpdates, PagedResults, SearchRequest, TagSection } from "paperback-extensions-common"
-import { title } from "process"
 
 let ML_IMAGE_DOMAIN = 'https://cover.mangabeast01.com/cover'
 
@@ -42,7 +41,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string
         titles : ["testv2"],
         image : 'https://cdn.mangakawaii.com/uploads/manga/one-piece/cover/cover_250x350.jpg',
         status,
-        author,
+        author : "v3",
         //tags: tagSections,
         desc : url ,
         hentai: false,

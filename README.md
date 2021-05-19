@@ -1,5 +1,9 @@
+[![Bundle and Publish Sources](https://github.com/aerodomigue/extensions-promises/actions/workflows/main.yml/badge.svg)](https://github.com/aerodomigue/extensions-promises/actions/workflows/main.yml)
 # French Source/Source Francaise
 use: `https://aerodomigue.github.io/extensions-promises/` for add source
+
+Work:
+> MangaKawaii.com
 
 
 

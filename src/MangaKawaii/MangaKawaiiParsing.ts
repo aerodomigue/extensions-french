@@ -1,4 +1,3 @@
-import { NONAME } from "dns"
 import { Chapter, ChapterDetails, HomeSection, LanguageCode, Manga, MangaStatus, MangaTile, MangaUpdates, PagedResults, SearchRequest, TagSection } from "paperback-extensions-common"
 
 export const CDN_URL = "https://cdn.mangakawaii.net"
@@ -21,7 +20,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
     const parsedJson = JSON.parse(json)
     const entity = parsedJson['@graph']
     const desc = entity[1]['description']
-    const image = (entity[0]['url'] ?? "" ).replace(/ /g, '%20')
+    const image = encodeURI((entity[0]['url'] ?? "" ))
     const titles = [entity[1]['name']] ?? [""]
     const author = $('span[itemprop="author"]').text()
     const rating = Number($('strong[id="avgrating"]').text())
@@ -39,8 +38,6 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
         hentai: false,
         rating, //4.19
     })
-
-    console.log(manga)
     return manga
 }
 
@@ -71,29 +68,11 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
 
 export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId: string): ChapterDetails => { //work
     const pages: string[] = []
-
-    //const charNumPage = $('select[id="page-list"]').text().replace(/\t*\n*/g, '').split("Page").length - 1
-    //console.log("nbr: " + charNumPage)
-    //console.log(chapterId)
-    //const pageNum = Number(charNumPage)
-
-    //const nbrChap = chapterId.split('/')
-    //const chapter = Number( nbrChap ? nbrChap[2] : 0 )
-    //console.log(chapter)
-
     const urlPageArray =  $('div[id="all3"] img').map((i, x) => $(x).attr('src')).toArray()
 
 
     for (const page of urlPageArray) {
-        if(page)
-        {
-            pages.push(`${page}`.replace(/\s/g, ""))
-        }
-        else
-        {
-            console.log('Error: 2 ,Parse url error:\n' + page)
-            throw new Error('Parse url error:\n' + page)
-        }
+        pages.push(`${page}`.replace(/\s/g, ""))
     }
     const chapterDetails = createChapterDetails({
       id: chapterId,
@@ -135,7 +114,6 @@ export const parseUpdatedManga = ($: CheerioStatic, time: Date, ids: string[]): 
                 }
             } else break
         }
-        console.log(foundIds)
         if (!passedReferenceTime) {
             return {updates: foundIds, loadNextPage: true}
         } else {
@@ -156,8 +134,8 @@ export const parseSearch = ($: CheerioStatic, metadata: any, ML_DOMAIN: string):
 
     for (const elem of titles) {
             mangaTiles.push(createMangaTile({
-                id: `${elem}`.replace('/manga/', '').replace(/ /g, '%20'),
-                title: createIconText({ text: $('h1 + ul a[href*="' + elem +'"]').text().replace(/ /g, '%20') }),
+                id: encodeURI(`${elem}`.replace('/manga/', '')),
+                title: createIconText({ text: encodeURI($('h1 + ul a[href*="' + elem +'"]').text()) }),
                 image: `${CDN_URL}/uploads${elem}/cover/cover_250x350.jpg`,
             }))
     }
@@ -206,9 +184,9 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
         sectionCallback(section)
         const manga: MangaTile[] = []
         for (const elem of sectionData[i]) {
-            const id = `${elem.url?.replace('/manga/', '').replace(/ /g, '%20') ?? ''}`
+            const id = `${encodeURI(elem.url?.replace('/manga/', '')) ?? ''}`
             const title = elem.title
-            const image = `${CDN_URL}/uploads${elem.url}/cover/cover_250x350.jpg`.replace(/ /g, '%20')
+            const image = encodeURI(`${CDN_URL}/uploads${elem.url}/cover/cover_250x350.jpg`)
             manga.push(createMangaTile({
                 id,
                 image,

@@ -18,7 +18,7 @@ import {
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: 'Dev:0.1.27',
+    version: 'Dev:0.1.28',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -28,7 +28,7 @@ import {
     websiteBaseURL: ML_DOMAIN,
     sourceTags: [
       {
-        text: "Notifications WIP",
+        text: "Notifications",
         type: TagType.YELLOW
       },
       {
@@ -150,11 +150,6 @@ import {
       })
 
       const response = await this.requestManager.schedule(request, 1)
-
-      if(response.status != 200)
-      {
-          throw new Error('Error 3, Problème avec le site\n Website Error: ' + response.status)
-      }
 
       const $ = this.cheerio.load(response.data)
       parseHomeSections($, response.data, sectionCallback);

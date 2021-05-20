@@ -50,7 +50,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string
 
 export const parseChapters = ($: CheerioStatic, mangaId: string,  url: string): Chapter[] => {  //work
     console.log(url)
-    const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => {return $(elem) }).reverse()
+    const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => {return $(elem) })
     const chapters: Chapter[] = []
 
     for (const elem of chaptersHTML) {

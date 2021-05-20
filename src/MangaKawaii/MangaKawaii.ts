@@ -29,14 +29,14 @@ import {
     sourceTags: [
       {
         text: "Notifications",
-        type: TagType.GREEN
+        type: TagType.RED
       },
       {
         text: "Cloudflare",
         type: TagType.RED
       },
       {
-        text: "Developpent in progress",
+        text: "development in progress",
         type: TagType.YELLOW
       }
     ]

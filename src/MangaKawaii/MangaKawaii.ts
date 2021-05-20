@@ -34,6 +34,10 @@ import {
       {
         text: "Cloudflare",
         type: TagType.RED
+      },
+      {
+        text: "Developpent in progress",
+        type: TagType.YELLOW
       }
     ]
   }

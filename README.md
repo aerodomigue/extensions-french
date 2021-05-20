@@ -4,3 +4,13 @@ Sources were a highly requested feature for Paperback as it allows users to read
 
 ##  Developing A Source
 To find out more about developing a source, check out the extensions common repo [wiki](https://github.com/Paperback-iOS/extensions-common/wiki/Intro-to-Paperback-Sources), use one of the current implementations in the repo as an example, and/or be sure to ask in the [Discord](https://discord.gg/Ny83JV3)!
+
+
+____
+
+Fork de Paperback's main exensions repo.
+
+[Click ici](https://paperback.moe/addRepo/?name=Aerodomigue%27s%20Extensions&url=https%253A%252F%25aerodomigue.github.io%252Fextensions-french) pour ajouter ce dépo a Paperback!
+
+Branches:
+- Stable est la branche ou je pousse tous le code en lien a l'extension.

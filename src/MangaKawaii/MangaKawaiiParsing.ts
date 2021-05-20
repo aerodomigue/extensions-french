@@ -162,8 +162,8 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
     const titlesRecommanded = $('div[id*="load_latest"] h4').toArray().map((elem) => {return $(elem).text()})
     const urlImagesRecommanded = $('div[id*="load_latest"] div h4 a').toArray().map((elem) => {return $(elem).attr('href') ?? ""})
 
-    const titlesHot = $('div[class*="hot-manga__item-name"]').toArray().map((elem) => {return $(elem).text()})
-    const urlImagesHot = $('div[class*="hot-manga__item-name"]').toArray().map((elem) => {return $(elem).attr('href') ?? ""})
+    const titlesHot = $('div[class="hot-manga__item-name"]').toArray().map((elem) => {return $(elem).text()})
+    const urlImagesHot = $('a.hot-manga__item').toArray().map((elem) => {return $(elem).attr('href') ?? ""})
 
     //const titleTopTenNotecSection = $('div[class="col-6"] div[class="media-thumbnail__name"]').toArray().map((elem) => {return $(elem).text()})
     //const urlTopTenNotecSection =  $('div[class="col-6"] a').toArray().map((elem) => {return $(elem).attr('href') ?? ""}) 
@@ -175,7 +175,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
     const dictHot = dictParser(titlesHot, urlImagesHot)
     //const dictTopTen = dictParser(titleTopTenNotecSection, urlTopTenNotecSection)
     const dictTopTenView = dictParser(titTopTenView, urlTopTenView)
-
+    console.log(dictHot)
     const sections = [latestSection, hotSection, /*topTenNotecSection,*/ topTenView]
     const sectionData = [dictLaster, dictHot, /*dictTopTen,*/ dictTopTenView]
 
@@ -195,6 +195,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
         sectionCallback(section)
     }
 }
+
 
     function dictParser(titleArrat: string[], urlArray: string[])
     {

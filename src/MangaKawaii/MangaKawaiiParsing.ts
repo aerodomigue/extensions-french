@@ -16,7 +16,7 @@ export const regex: RegexIdMatch = {
     'directory_image_host': /<img ng-src=\"(.*)\//
 }
 
-export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string): Manga => {
+export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string): Manga => { //work
     const json = $('[type=application\\/ld\\+json]').last().html() ?? '' // next, get second child  
     const parsedJson = JSON.parse(json)
     const entity = parsedJson['@graph']
@@ -48,7 +48,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string
     })
 }
 
-export const parseChapters = ($: CheerioStatic, mangaId: string,  url: string): Chapter[] => {
+export const parseChapters = ($: CheerioStatic, mangaId: string,  url: string): Chapter[] => {  //work
     const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => {return $(elem) })
     const chapters: Chapter[] = []
 
@@ -73,7 +73,7 @@ export const parseChapters = ($: CheerioStatic, mangaId: string,  url: string): 
     return chapters;
 }
 
-export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId: string): ChapterDetails => {
+export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId: string): ChapterDetails => { //work
     const pages: string[] = []
 
     //const charNumPage = $('select[id="page-list"]').text().replace(/\t*\n*/g, '').split("Page").length - 1
@@ -85,7 +85,7 @@ export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId
     //const chapter = Number( nbrChap ? nbrChap[2] : 0 )
     //console.log(chapter)
 
-    const urlPageArray =  $('div[id="all3"] img').map((i, x) => $(x).attr('src')).toArray()
+    const urlPageArray =  $('div[id="all3"] img').map((i, x) => $(x).attr('src')).toArray().reverse()
 
     for (const page of urlPageArray) {
         if(page)
@@ -106,7 +106,7 @@ export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId
     return chapterDetails
 }
 
-export const parseUpdatedManga = ({ data }: any, time: Date, ids: string[]): MangaUpdates => {
+export const parseUpdatedManga = ({ data }: any, time: Date, ids: string[]): MangaUpdates => { //work in progress
     const returnObject: MangaUpdates = {
         'ids': []
     }
@@ -117,14 +117,14 @@ export const parseUpdatedManga = ({ data }: any, time: Date, ids: string[]): Man
     return returnObject;
 }
 
-export const searchMetadata = (query: SearchRequest) => {
+export const searchMetadata = (query: SearchRequest) => {//not work
     return {
         'query': query.title?.toLowerCase().split(' ').join('+'),
         'search_type': "manga",
     }
 }
 
-export const parseSearch = ($: CheerioStatic, metadata: any, ML_DOMAIN: string): PagedResults => {
+export const parseSearch = ($: CheerioStatic, metadata: any, ML_DOMAIN: string): PagedResults => {//work
     const mangaTiles: MangaTile[] = []
     const titles = $('h1 + ul a[href*=manga]').toArray().map((elem) => {return $(elem).attr('href') })
 
@@ -141,7 +141,7 @@ export const parseSearch = ($: CheerioStatic, metadata: any, ML_DOMAIN: string):
     })
 }
 
-export const parseTags = (data: any): TagSection[] => {
+export const parseTags = (data: any): TagSection[] => {//not work
     const tagSections: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: [] }),
         createTagSection({ id: '1', label: 'format', tags: [] })]
     const genres = JSON.parse(data.match(/"Genre"\s*: (.*)/)?.[1].replace(/'/g, "\""))
@@ -152,11 +152,11 @@ export const parseTags = (data: any): TagSection[] => {
     return tagSections
 }
 
-export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: (section: HomeSection) => void): void => {
+export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: (section: HomeSection) => void): void => {//work
     const hotSection = createHomeSection({ id: 'hot_manga', title: 'TOP HITS', view_more: true })
     const latestSection = createHomeSection({ id: 'latest', title: 'LATEST UPDATES', view_more: true })
-    const newTitlesSection = createHomeSection({ id: 'new_titles', title: 'NEW TITLES', view_more: true })
-    const recommendedSection = createHomeSection({ id: 'recommended', title: 'RECOMMENDATIONS', view_more: true })
+    //const newTitlesSection = createHomeSection({ id: 'new_titles', title: 'NEW TITLES', view_more: true })
+    //const recommendedSection = createHomeSection({ id: 'recommended', title: 'RECOMMENDATIONS', view_more: true })
 
     const titlesHot = $('div[class="hot-manga__item-name"]').toArray().map((elem) => {return $(elem).text()}).slice(0, 15)
     const urlImagesHot = $('a.hot-manga__item').toArray().map((elem) => {return $(elem).attr('href')}).slice(0, 15)
@@ -204,7 +204,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
     }
 }
 
-export const parseViewMore = (data: any, homepageSectionId: string): PagedResults | null => {
+//export const parseViewMore = (data: any, homepageSectionId: string): PagedResults | null => { //not work
     //const manga: MangaTile[] = []
     //const mangaIds: Set<string> = new Set<string>()
     //if (!regex[homepageSectionId]) return null
@@ -233,5 +233,5 @@ export const parseViewMore = (data: any, homepageSectionId: string): PagedResult
     //return createPagedResults({
     //   results: manga
     //})
-    return null
-}
+    //return null
+//}

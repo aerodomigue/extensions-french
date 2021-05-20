@@ -79,7 +79,7 @@ describe('MangaKawaiTest Tests', function () {
     })
 
     
-    it("Testing home page results for hot titles", async() => {
+    /*it("Testing home page results for hot titles", async() => {
         let results = await wrapper.getViewMoreItems(source, "hot_update", {}, 1)
 
         expect(results, "No results whatsoever for this section").to.exist
@@ -89,7 +89,7 @@ describe('MangaKawaiTest Tests', function () {
         expect(data.id, "No ID present").to.exist
         expect(data.image, "No image present").to.exist
         expect(data.title.text, "No title present").to.exist
-    })
+    })*/
     
     //it("Testing home page results for latest titles", async() => {
     //    let results = await wrapper.getViewMoreItems(source, "latest", {}, 1)

@@ -12,7 +12,7 @@ import {
     TagType,
     RequestHeaders
   } from "paperback-extensions-common"
-  import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, parseViewMore, searchMetadata } from "./MangaKawaiiParsing"
+  import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, /*parseViewMore,*/ searchMetadata } from "./MangaKawaiiParsing"
   
   export const ML_DOMAIN = 'https://www.mangakawaii.net'
   const method = 'GET'
@@ -157,7 +157,7 @@ import {
       parseHomeSections($, response.data, sectionCallback);
     }
   
-    async getViewMoreItems(homepageSectionId: string, _metadata: any): Promise<PagedResults | null> {
+    /*async getViewMoreItems(homepageSectionId: string, _metadata: any): Promise<PagedResults | null> { //not work
       const request = createRequestObject({
         url: ML_DOMAIN,
         method,
@@ -165,7 +165,7 @@ import {
   
       const response = await this.requestManager.schedule(request, 1)
       return parseViewMore(response.data, homepageSectionId);
-    }
+    }*/
 
     constructHeaders(headers: any, refererPath?: string): any {
       if(this.userAgent !== '') {

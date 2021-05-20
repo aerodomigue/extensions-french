@@ -21,7 +21,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
     const parsedJson = JSON.parse(json)
     const entity = parsedJson['@graph']
     const desc = entity[1]['description']
-    const image = entity[0]['url']
+    const image = (entity[0]['url'] ?? "" ).replace(/ /g, '%20')
     const titles = [entity[1]['name']] ?? [""]
     const author = $('span[itemprop="author"]').text()
     const rating = Number($('strong[id="avgrating"]').text())

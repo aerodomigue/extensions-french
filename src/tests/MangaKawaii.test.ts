@@ -1,9 +1,8 @@
 import cheerio from 'cheerio'
-import { time } from 'console';
 import { APIWrapper, Source } from 'paperback-extensions-common';
 import { MangaKawaii } from '../MangaKawaii/MangaKawaii';
 
-describe('MangaKawaiTest Tests', function () {
+describe('MangaKawaiiTest Tests', function () {
 
     var wrapper: APIWrapper = new APIWrapper();
     var source: Source = new MangaKawaii(cheerio);
@@ -76,6 +75,13 @@ describe('MangaKawaiTest Tests', function () {
     it("Testing Home-Page aquisition", async() => {
         let homePages = await wrapper.getHomePageSections(source)
         expect(homePages, "No response from server").to.exist
+    })
+
+    it("Testing Notifications", async () => {
+        let updates = await wrapper.filterUpdatedManga(source, new Date("2021-02-01"), [mangaId])
+        expect(updates, "No server response").to.exist
+        expect(updates, "Empty server response").to.not.be.empty
+        expect(updates[0], "No updates").to.not.be.empty;
     })
 
     

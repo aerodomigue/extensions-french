@@ -33,23 +33,22 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string, url: string
 
     let status = MangaStatus.ONGOING
     status = $('.row').text().includes('En Cours') ? MangaStatus.ONGOING : MangaStatus.COMPLETED
-
-    return createManga({
-        id: mangaId,
-        titles ,
-        image ,
-        status ,
-        author ,
+    const manga = createManga({
+        id: mangaId, //kill-the-hero
+        titles , //[ 'Kill the Hero' ]
+        image , //'https://cdn.mangakawaii.net/uploads/manga/kill-the-hero/cover/cover_250x350.jpg',
+        status , //1
+        author , //'D-Dart',
         //tags: tagSections,
-        desc ,
+        desc , //'Nous sommes dans un monde semblable à un jeu, où donjons, monstres et joueurs apparaissent. Dans un monde dans lequel je suis le seul à connaître la v...',
         hentai: false,
-        rating,
+        rating, //4.19
         lastUpdate: ""
     })
+    return manga
 }
 
 export const parseChapters = ($: CheerioStatic, mangaId: string,  url: string): Chapter[] => {  //work
-    console.log(url)
     const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => {return $(elem) })
     const chapters: Chapter[] = []
 
@@ -71,7 +70,6 @@ export const parseChapters = ($: CheerioStatic, mangaId: string,  url: string): 
         time
       }))
     }
-    console.log(chapters)
     return chapters;
 }
 
@@ -109,14 +107,15 @@ export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId
     return chapterDetails
 }
 
-export const parseUpdatedManga = ({ data }: any, time: Date, ids: string[]): MangaUpdates => { //work in progress
+export const parseUpdatedManga = ($: CheerioStatic, time: Date, ids: string[]): MangaUpdates => { //work in progress
     const returnObject: MangaUpdates = {
         'ids': []
     }
-    const updateManga = JSON.parse(data.match(regex['latest'])?.[1])
-    for (const elem of updateManga) {
-        if (ids.includes(elem.IndexName) && time < new Date(elem.Date)) returnObject.ids.push(elem.IndexName)
-    }
+    //console.log(data)
+    //const updateManga = JSON.parse(data.match(regex['latest'])?.[1])
+    //for (const elem of updateManga) {
+    //    if (ids.includes(elem.IndexName) && time < new Date(elem.Date)) returnObject.ids.push(elem.IndexName)
+    //}
     return returnObject;
 }
 
@@ -137,9 +136,7 @@ export const parseSearch = ($: CheerioStatic, metadata: any, ML_DOMAIN: string):
                 title: createIconText({ text: $('h1 + ul a[href*="' + elem +'"]').text() }),
                 image: `${CDN_URL}/uploads${elem}/cover/cover_250x350.jpg`,
             }))
-    }
-    // This source parses JSON and never requires additional pages
-    return createPagedResults({
+    }    return createPagedResults({
         results: mangaTiles
     })
 }

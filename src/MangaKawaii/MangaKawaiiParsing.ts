@@ -153,39 +153,36 @@ export const parseTags = (data: any): TagSection[] => {//not work
 }
 
 export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: (section: HomeSection) => void): void => {//work
-    const hotSection = createHomeSection({ id: 'hot_manga', title: 'TOP HITS', view_more: true })
-    const latestSection = createHomeSection({ id: 'latest', title: 'LATEST UPDATES', view_more: true })
-    //const newTitlesSection = createHomeSection({ id: 'new_titles', title: 'NEW TITLES', view_more: true })
-    //const recommendedSection = createHomeSection({ id: 'recommended', title: 'RECOMMENDATIONS', view_more: true })
+    const latestSection = createHomeSection({ id: 'latest', title: 'LATEST UPDATES', view_more: false })
+    const hotSection = createHomeSection({ id: 'hot_manga', title: 'TOP HITS', view_more: false })
+    const topTenNotecSection = createHomeSection({ id: 'toptennote', title: 'TOP 10 NOTES', view_more: false })
+    const topTenView = createHomeSection({ id: 'hot_manga', title: 'TOP 10 VUES', view_more: false })
 
-    const titlesHot = $('div[class="hot-manga__item-name"]').toArray().map((elem) => {return $(elem).text()}).slice(0, 15)
-    const urlImagesHot = $('a.hot-manga__item').toArray().map((elem) => {return $(elem).attr('href')}).slice(0, 15)
+    const titlesRecommanded = $('div[id*="load_latest"] h4').toArray().map((elem) => {return $(elem).text()})
+    const urlImagesRecommanded = $('div[id*="load_latest"] div h4 a').toArray().map((elem) => {return $(elem).attr('href') ?? ""})
 
-    const titlesRecommanded = $('div[id="load_latest"] h4').toArray().map((elem) => {return $(elem).text()}).slice(0, 35)
-    const urlImagesRecommanded = $('div[id="load_latest"] h4 a').toArray().map((elem) => {return $(elem).attr('href')}).slice(0, 35)
+    const titlesHot = $('div[class*="hot-manga__item-name"]').toArray().map((elem) => {return $(elem).text()})
+    const urlImagesHot = $('div[class*="hot-manga__item-name"]').toArray().map((elem) => {return $(elem).attr('href') ?? ""})
 
-    let dictHot = [] 
-    for (let index = 0; index < titlesHot.length; index++) {
-        dictHot.push({
-            title: titlesHot[index],
-            url: urlImagesHot[index]
-        });
-    }
+    //const titleTopTenNotecSection = $('div[class="col-6"] div[class="media-thumbnail__name"]').toArray().map((elem) => {return $(elem).text()})
+    //const urlTopTenNotecSection =  $('div[class="col-6"] a').toArray().map((elem) => {return $(elem).attr('href') ?? ""}) 
 
-    let dictLaster = [] 
-    for (let index = 0; index < titlesHot.length; index++) {
-        dictLaster.push({
-            title: titlesRecommanded[index],
-            url: urlImagesRecommanded[index]
-        });
-    }
+    const titTopTenView = $('div[id="top_views"] a div[class="media-thumbnail__name"]').toArray().map((elem) => {return $(elem).text()})
+    const urlTopTenView = $('div[id="top_views"] a').toArray().map((elem) => {return $(elem).attr('href') ?? ""}) 
 
-    //const latest = JSON.parse((data.match(regex[latestSection.id])?.[1])).slice(0, 15)
-    //const newTitles = JSON.parse((data.match(regex[newTitlesSection.id]))?.[1]).slice(0, 15)
-    //const recommended = JSON.parse((data.match(regex[recommendedSection.id])?.[1]))
+    const dictLaster = dictParser(titlesRecommanded, urlImagesRecommanded)
+    const dictHot = dictParser(titlesHot, urlImagesHot)
+    //const dictTopTen = dictParser(titleTopTenNotecSection, urlTopTenNotecSection)
+    const dictTopTenView = dictParser(titTopTenView, urlTopTenView)
 
-    const sections = [hotSection, latestSection]//, latestSection, newTitlesSection]
-    const sectionData = [dictHot, dictLaster]//, latest, newTitles]
+    const sections = [latestSection, hotSection, topTenNotecSection, topTenView]
+    const sectionData = [dictLaster, dictHot, /*dictTopTen,*/ dictTopTenView]
+
+    //console.log(titleTopTenNotecSection)
+    console.log("latest " + dictLaster.length)
+    console.log("hot " + titlesHot.length)
+    console.log("top 10 view " + dictTopTenView.length)
+    console.log($('div.top_rating_blade').html())
 
     for (const [i, section] of sections.entries()) {
         sectionCallback(section)
@@ -203,6 +200,18 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
         sectionCallback(section)
     }
 }
+
+    function dictParser(titleArrat: string[], urlArray: string[])
+    {
+        let dict = [] 
+        for (let index = 0; index < titleArrat.length; index++) {
+            dict.push({
+                title: titleArrat[index],
+                url: urlArray[index]
+            });
+        }
+        return dict
+    }
 
 //export const parseViewMore = (data: any, homepageSectionId: string): PagedResults | null => { //not work
     //const manga: MangaTile[] = []

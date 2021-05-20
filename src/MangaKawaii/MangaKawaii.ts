@@ -18,7 +18,7 @@ import {
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: 'Dev:0.1.20',
+    version: 'Dev:0.1.21',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -113,16 +113,21 @@ import {
     }
   
     async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void> {
+
+      //foreach(const elem of ids)
       const request = createRequestObject({
         url: `${ML_DOMAIN}/`,
         headers : this.constructHeaders({}),
         method,
       })
-  
       const response = await this.requestManager.schedule(request, 1)
       const $ = this.cheerio.load(response.data)
-      const returnObject = parseUpdatedManga($, time, ids);
-      mangaUpdatesFoundCallback(createMangaUpdates(returnObject))
+
+      const updatedManga = parseUpdatedManga($, time, ids);
+      if (updatedManga.ids.length > 0) {
+        mangaUpdatesFoundCallback(createMangaUpdates({
+            ids: updatedManga.ids
+        }))}
     }
   
     async searchRequest(query: SearchRequest, _metadata: any): Promise<PagedResults> {

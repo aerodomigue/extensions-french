@@ -127,7 +127,12 @@ export const parseUpdatedManga = ($: CheerioStatic, time: Date, ids: string[]): 
     //for (const elem of updateManga) {
     //    if (ids.includes(elem.IndexName) && time < new Date(elem.Date)) returnObject.ids.push(elem.IndexName)
     //}
-    return returnObject;
+
+    for (let index = 0; index < ids.length -1; index++) {
+        returnObject.ids.push(ids[index]);
+    }
+
+    return returnObject
 }
 
 export const searchMetadata = (query: SearchRequest) => {//not work

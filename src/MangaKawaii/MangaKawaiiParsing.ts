@@ -157,7 +157,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
     const latestSection = createHomeSection({ id: 'latest', title: 'LATEST UPDATES', view_more: false })
     const hotSection = createHomeSection({ id: 'hot_manga', title: 'TOP HITS', view_more: false })
     //const topTenNotecSection = createHomeSection({ id: 'toptennote', title: 'TOP 10 NOTES', view_more: false })
-    const topTenView = createHomeSection({ id: 'hot_manga', title: 'TOP 10', view_more: false })
+    const topTenView = createHomeSection({ id: 'hot_ten_view', title: 'TOP 10', view_more: false })
 
     const titlesRecommanded = $('div[id*="load_latest"] h4').toArray().map((elem) => {return $(elem).text()})
     const urlImagesRecommanded = $('div[id*="load_latest"] div h4 a').toArray().map((elem) => {return $(elem).attr('href') ?? ""})

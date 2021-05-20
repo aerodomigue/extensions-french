@@ -39,6 +39,8 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
         hentai: false,
         rating, //4.19
     })
+
+    console.log(manga)
     return manga
 }
 
@@ -132,10 +134,11 @@ export const parseSearch = ($: CheerioStatic, metadata: any, ML_DOMAIN: string):
     for (const elem of titles) {
             mangaTiles.push(createMangaTile({
                 id: `${elem}`.replace('/manga/', '').replace(/ /g, '%20'),
-                title: createIconText({ text: $('h1 + ul a[href*="' + elem +'"]').text() }),
+                title: createIconText({ text: $('h1 + ul a[href*="' + elem +'"]').text().replace(/ /g, '%20') }),
                 image: `${CDN_URL}/uploads${elem}/cover/cover_250x350.jpg`,
             }))
-    }    return createPagedResults({
+    }
+    return createPagedResults({
         results: mangaTiles
     })
 }
@@ -182,7 +185,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
         for (const elem of sectionData[i]) {
             const id = `${elem.url?.replace('/manga/', '').replace(/ /g, '%20') ?? ''}`
             const title = elem.title
-            const image = `${CDN_URL}/uploads${elem.url}/cover/cover_250x350.jpg`
+            const image = `${CDN_URL}/uploads${elem.url}/cover/cover_250x350.jpg`.replace(/ /g, '%20')
             manga.push(createMangaTile({
                 id,
                 image,

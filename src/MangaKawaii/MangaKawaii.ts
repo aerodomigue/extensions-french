@@ -59,20 +59,8 @@ import {
         param: mangaId
       })
       const response = await this.requestManager.schedule(request, 1)
-      const re = RegExp('[\'"](/arrilot/load-widget.*?)[\'"]')
-      const chapterRequest = response.data.match(re)
-      
-      const requestChapter = createRequestObject({
-        url: `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`,
-        method,
-        headers : this.constructHeaders({}),
-        })
-      request.url = `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`
-      const responseChapter = await this.requestManager.schedule(requestChapter, 1)
-
       const $ = this.cheerio.load(response.data)
-      const $responseChapter = this.cheerio.load(responseChapter.data)
-      return parseMangaDetails($, mangaId, $responseChapter)
+      return parseMangaDetails($, mangaId)
     }
   
     async getChapters(mangaId: string): Promise<Chapter[]> {

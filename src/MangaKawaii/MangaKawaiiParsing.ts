@@ -16,30 +16,15 @@ export const regex: RegexIdMatch = {
     'directory_image_host': /<img ng-src=\"(.*)\//
 }
 
-export const parseMangaDetails = ($: CheerioStatic, mangaId: string, $responseChapter: CheerioStatic): Manga => { //work
+export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => { //work
     const json = $('[type=application\\/ld\\+json]').last().html() ?? '' // next, get second child  
     const parsedJson = JSON.parse(json)
     const entity = parsedJson['@graph']
-    const desc = $('dd[itemprop="description"]').text()
+    const desc = entity[1]['description']
     const image = entity[0]['url']
     const titles = [entity[1]['name']] ?? [""]
     const author = $('span[itemprop="author"]').text()
     const rating = Number($('strong[id="avgrating"]').text())
-
-    //const tagSections: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: [] }),
-    //createTagSection({ id: '1', label: 'format', tags: [] })]
-    //tagSections[0].tags = $('a[itemprop="genre"]').toArray().map((elem) => createTag({ id: $(elem).text(), label: $(elem).text() }))
-    const timeStr = $responseChapter("td.table__date.small").text().split(' ')[1].split('.')
-    const date = timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]
-    let Difference_In_Time = new Date().getTime() - new Date(Date.parse(date)).getTime();
-    let lastUpdate = "Now"
-    if(Difference_In_Time / (1000 * 3600 * 24) > 1)
-    {
-        lastUpdate = (Difference_In_Time / (1000 * 3600 * 24)).toString()
-    }
-  
-    // To calculate the no. of days between two dates
-    let Difference_In_Days = Difference_In_Time / (1000 * 3600 * 24);
 
     let status = MangaStatus.ONGOING
     status = $('.row').text().includes('En Cours') ? MangaStatus.ONGOING : MangaStatus.COMPLETED
@@ -53,7 +38,6 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string, $responseCh
         desc , //'Nous sommes dans un monde semblable à un jeu, où donjons, monstres et joueurs apparaissent. Dans un monde dans lequel je suis le seul à connaître la v...',
         hentai: false,
         rating, //4.19
-        lastUpdate
     })
     console.log(manga)
     return manga

@@ -14,8 +14,7 @@ import {
   } from "paperback-extensions-common"
   import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, parseViewMore, searchMetadata } from "./MangaKawaiiParsing"
   
-  export const ML_DOMAIN = 'https://www.mangakawaii.com'
-  export const CDN_URL = "https://cdn.mangakawaii.com"
+  export const ML_DOMAIN = 'https://www.mangakawaii.net'
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
@@ -120,7 +119,7 @@ import {
       })
       const response = await this.requestManager.schedule(request, 1)
       const $ = this.cheerio.load(response.data)
-      return parseSearch($, metadata, CDN_URL, ML_DOMAIN)
+      return parseSearch($, metadata, ML_DOMAIN)
     }
   
     async getTags(): Promise<TagSection[] | null> {

@@ -1,7 +1,7 @@
 import { NONAME } from "dns"
 import { Chapter, ChapterDetails, HomeSection, LanguageCode, Manga, MangaStatus, MangaTile, MangaUpdates, PagedResults, SearchRequest, TagSection } from "paperback-extensions-common"
 
-export const CDN_URL = "https://cdn.mangakawaii.com"
+export const CDN_URL = "https://cdn.mangakawaii.net"
 
 export type RegexIdMatch = {
     [id: string]: RegExp
@@ -115,7 +115,7 @@ export const searchMetadata = (query: SearchRequest) => {
     }
 }
 
-export const parseSearch = ($: CheerioStatic, metadata: any, CDN_URL: string, ML_DOMAIN: string): PagedResults => {
+export const parseSearch = ($: CheerioStatic, metadata: any, ML_DOMAIN: string): PagedResults => {
     const mangaTiles: MangaTile[] = []
     const titles = $('h1 + ul a[href*=manga]').toArray().map((elem) => {return $(elem).attr('href') })
 

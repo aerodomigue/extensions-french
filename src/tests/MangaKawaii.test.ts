@@ -16,7 +16,7 @@ describe('MangaKawaiTest Tests', function () {
      * Try to choose a manga which is updated frequently, so that the historical checking test can 
      * return proper results, as it is limited to searching 30 days back due to extremely long processing times otherwise.
      */
-    var mangaId = "isekai-meikyuu-de-harem-o";
+    var mangaId = "kill-the-hero";
 
     it("Retrieve Manga Details", async () => {
         let details = await wrapper.getMangaDetails(source, mangaId);

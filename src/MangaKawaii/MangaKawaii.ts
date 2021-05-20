@@ -18,7 +18,7 @@ import {
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: '0.1.17',
+    version: '0.1.18',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -74,12 +74,21 @@ import {
         {
           url = `${ML_DOMAIN}${chapterRequest[1]}`
           const request = createRequestObject({
-            url: `${ML_DOMAIN}${chapterRequest[1]}`,
-            method,
-            headers : this.constructHeaders({}),
-            })
+              url: `${ML_DOMAIN}${chapterRequest[1]}`,
+              method,
+              headers : this.constructHeaders({}),
+              })
           response = await this.requestManager.schedule(request, 1)
+          if(!response)
+          {
+            console.log('Error: 1, Parse url error:\n' + (chapterRequest ? chapterRequest[1] : "URL Empty"))
+            throw new Error('Error: 1, Parse url error:\n' + (chapterRequest ? chapterRequest[1] : "URL Empty"))
+          }
         }
+      else{
+        console.log('Error: 0, Parse url error:\n' + (chapterRequest ? chapterRequest[1] : "URL Empty"))
+        throw new Error('Error: 0, Parse url error:\n' + (chapterRequest ? chapterRequest[1] : "URL Empty"))
+      }
       const $ = this.cheerio.load(response.data)
       return parseChapters($, mangaId, url)
     }
@@ -94,7 +103,7 @@ import {
   
       const response = await this.requestManager.schedule(request, 1)
       const $ = this.cheerio.load(response.data)
-      return parseChapterDetails($, mangaId, chapterId, ML_DOMAIN)
+      return parseChapterDetails($, mangaId, chapterId)
     }
   
     async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void> {

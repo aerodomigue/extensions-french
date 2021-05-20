@@ -73,21 +73,30 @@ export const parseChapters = ($: CheerioStatic, mangaId: string,  url: string): 
     return chapters;
 }
 
-export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId: string, ML_DOMAIN: string): ChapterDetails => {
+export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId: string): ChapterDetails => {
     const pages: string[] = []
 
-    const chapterInfo = JSON.parse("{}")
-    const charNumPage = $('select[id="page-list"]').text().replace(/\t*\n*/g, '').split("Page").length - 1
-    const pageNum = Number(charNumPage)
+    //const charNumPage = $('select[id="page-list"]').text().replace(/\t*\n*/g, '').split("Page").length - 1
+    //console.log("nbr: " + charNumPage)
+    //console.log(chapterId)
+    //const pageNum = Number(charNumPage)
 
+    //const nbrChap = chapterId.split('/')
+    //const chapter = Number( nbrChap ? nbrChap[2] : 0 )
+    //console.log(chapter)
 
-    const nbrChap = chapterId.split('/')
-    const chapter = Number( nbrChap ? nbrChap[2] : 0 )
-
-    const urlPageArray =  $('div[id="all3"] img').map((i, x) => $(x).attr('data-src')).toArray()
+    const urlPageArray =  $('div[id="all3"] img').map((i, x) => $(x).attr('src')).toArray()
 
     for (const page of urlPageArray) {
-        pages.push(`${page}`.replace(/\s/g, ""))
+        if(page)
+        {
+            pages.push(`${page}`.replace(/\s/g, ""))
+        }
+        else
+        {
+            console.log('Error: 2 ,Parse url error:\n' + page)
+            throw new Error('Parse url error:\n' + page)
+        }
     }
     const chapterDetails = createChapterDetails({
       id: chapterId,
@@ -154,8 +163,6 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
 
     const titlesRecommanded = $('div[id="load_latest"] h4').toArray().map((elem) => {return $(elem).text()}).slice(0, 35)
     const urlImagesRecommanded = $('div[id="load_latest"] h4 a').toArray().map((elem) => {return $(elem).attr('href')}).slice(0, 35)
-
-    console.log(urlImagesRecommanded)
 
     let dictHot = [] 
     for (let index = 0; index < titlesHot.length; index++) {

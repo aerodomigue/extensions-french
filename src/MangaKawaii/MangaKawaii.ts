@@ -18,7 +18,7 @@ import {
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: 'Dev:0.1.19',
+    version: 'Dev:0.1.20',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -55,11 +55,24 @@ import {
       const request = createRequestObject({
         url: `${ML_DOMAIN}/manga/`,
         method,
+        headers : this.constructHeaders({}),
         param: mangaId
       })
       const response = await this.requestManager.schedule(request, 1)
-      let $ = this.cheerio.load(response.data)
-      return parseMangaDetails($, mangaId, `${ML_DOMAIN}/manga/${mangaId}`)
+      const re = RegExp('[\'"](/arrilot/load-widget.*?)[\'"]')
+      const chapterRequest = response.data.match(re)
+      
+      const requestChapter = createRequestObject({
+        url: `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`,
+        method,
+        headers : this.constructHeaders({}),
+        })
+      request.url = `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`
+      const responseChapter = await this.requestManager.schedule(requestChapter, 1)
+
+      const $ = this.cheerio.load(response.data)
+      const $responseChapter = this.cheerio.load(responseChapter.data)
+      return parseMangaDetails($, mangaId, $responseChapter)
     }
   
     async getChapters(mangaId: string): Promise<Chapter[]> {
@@ -69,32 +82,21 @@ import {
         headers : this.constructHeaders({}),
         param: mangaId
       })
-  
+
       let response = await this.requestManager.schedule(request, 1)
       const re = RegExp('[\'"](/arrilot/load-widget.*?)[\'"]')
       const chapterRequest = response.data.match(re)
-      let url = ""
-      if(chapterRequest)
-        {
-          url = `${ML_DOMAIN}${chapterRequest[1]}`
-          const request = createRequestObject({
-              url: `${ML_DOMAIN}${chapterRequest[1]}`,
-              method,
-              headers : this.constructHeaders({}),
-              })
-          response = await this.requestManager.schedule(request, 1)
-          if(!response)
-          {
-            console.log('Error: 1, Parse url error:\n' + (chapterRequest ? chapterRequest[1] : "URL Empty"))
-            throw new Error('Error: 1, Parse url error:\n' + (chapterRequest ? chapterRequest[1] : "URL Empty"))
-          }
-        }
-      else{
-        console.log('Error: 0, Parse url error:\n' + (chapterRequest ? chapterRequest[1] : "URL Empty"))
-        throw new Error('Error: 0, Parse url error:\n' + (chapterRequest ? chapterRequest[1] : "URL Empty"))
-      }
+
+      const requestChapter = createRequestObject({
+        url: `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`,
+        method,
+        headers : this.constructHeaders({}),
+        })
+      request.url = `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`
+      response = await this.requestManager.schedule(requestChapter, 1)
+
       const $ = this.cheerio.load(response.data)
-      return parseChapters($, mangaId, url)
+      return parseChapters($, mangaId)
     }
   
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {

@@ -39,7 +39,6 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
         hentai: false,
         rating, //4.19
     })
-    console.log(manga)
     return manga
 }
 
@@ -112,7 +111,6 @@ export const parseUpdatedManga = ($: CheerioStatic, time: Date, ids: string[]): 
     //    if (ids.includes(elem.IndexName) && time < new Date(elem.Date)) returnObject.ids.push(elem.IndexName)
     //}
     const rand = Math.round(Math.random() * (ids.length - 0 + 1) + 0)
-    console.log(rand)
     for (let index = 0; index < rand; index++) {
         returnObject.ids.push(ids[index]);
     }
@@ -133,7 +131,7 @@ export const parseSearch = ($: CheerioStatic, metadata: any, ML_DOMAIN: string):
 
     for (const elem of titles) {
             mangaTiles.push(createMangaTile({
-                id: `${elem}`.replace('/manga/', ''),
+                id: `${elem}`.replace('/manga/', '').replace(/ /g, '%20'),
                 title: createIconText({ text: $('h1 + ul a[href*="' + elem +'"]').text() }),
                 image: `${CDN_URL}/uploads${elem}/cover/cover_250x350.jpg`,
             }))
@@ -175,7 +173,6 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
     const dictHot = dictParser(titlesHot, urlImagesHot)
     //const dictTopTen = dictParser(titleTopTenNotecSection, urlTopTenNotecSection)
     const dictTopTenView = dictParser(titTopTenView, urlTopTenView)
-    console.log(dictHot)
     const sections = [latestSection, hotSection, /*topTenNotecSection,*/ topTenView]
     const sectionData = [dictLaster, dictHot, /*dictTopTen,*/ dictTopTenView]
 
@@ -183,7 +180,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
         sectionCallback(section)
         const manga: MangaTile[] = []
         for (const elem of sectionData[i]) {
-            const id = `${elem.url?.replace('/manga/', '') ?? ''}`
+            const id = `${elem.url?.replace('/manga/', '').replace(/ /g, '%20') ?? ''}`
             const title = elem.title
             const image = `${CDN_URL}/uploads${elem.url}/cover/cover_250x350.jpg`
             manga.push(createMangaTile({

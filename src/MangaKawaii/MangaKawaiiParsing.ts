@@ -111,8 +111,9 @@ export const parseUpdatedManga = ($: CheerioStatic, time: Date, ids: string[]): 
     //for (const elem of updateManga) {
     //    if (ids.includes(elem.IndexName) && time < new Date(elem.Date)) returnObject.ids.push(elem.IndexName)
     //}
-
-    for (let index = 0; index < ids.length -1; index++) {
+    const rand = Math.round(Math.random() * (ids.length - 0 + 1) + 0)
+    console.log(rand)
+    for (let index = 0; index < rand; index++) {
         returnObject.ids.push(ids[index]);
     }
 
@@ -177,12 +178,6 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
 
     const sections = [latestSection, hotSection, /*topTenNotecSection,*/ topTenView]
     const sectionData = [dictLaster, dictHot, /*dictTopTen,*/ dictTopTenView]
-
-    //console.log(titleTopTenNotecSection)
-    console.log("latest " + dictLaster.length)
-    console.log("hot " + titlesHot.length)
-    console.log("top 10 view " + dictTopTenView.length)
-    console.log($('div.top_rating_blade').html())
 
     for (const [i, section] of sections.entries()) {
         sectionCallback(section)

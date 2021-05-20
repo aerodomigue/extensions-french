@@ -28,8 +28,8 @@ import {
     websiteBaseURL: ML_DOMAIN,
     sourceTags: [
       {
-        text: "Notifications",
-        type: TagType.RED
+        text: "Notifications WIP",
+        type: TagType.YELLOW
       },
       {
         text: "Cloudflare",
@@ -101,32 +101,22 @@ import {
     }
   
     async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void> {
-
-      //foreach(const elem of ids)
+ 
       const request = createRequestObject({
         url: `${ML_DOMAIN}/`,
         headers : this.constructHeaders({}),
         method,
       })
-      for (const elem of ids)
-      {
-        console.log("ids: " + elem)
+      let data = await this.requestManager.schedule(request, 1)
+      let $ = this.cheerio.load(data.data)
+
+      let updatedManga = parseUpdatedManga($, time, ids)
+
+      if (updatedManga.updates.length > 0) {
+          mangaUpdatesFoundCallback(createMangaUpdates({
+              ids: updatedManga.updates
+          }))
       }
-
-      const response = await this.requestManager.schedule(request, 1)
-      const $ = this.cheerio.load(response.data)
-
-      const updatedManga = parseUpdatedManga($, time, ids);
-
-      for (const elem of updatedManga.ids)
-      {
-        console.log("update?: " + elem)
-      }
-
-      if (updatedManga.ids.length > 0) {
-        mangaUpdatesFoundCallback(createMangaUpdates({
-            ids: updatedManga.ids
-        }))}
     }
   
     async searchRequest(query: SearchRequest, _metadata: any): Promise<PagedResults> {

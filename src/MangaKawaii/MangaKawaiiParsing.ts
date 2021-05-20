@@ -103,21 +103,44 @@ export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId
     return chapterDetails
 }
 
-export const parseUpdatedManga = ($: CheerioStatic, time: Date, ids: string[]): MangaUpdates => { //work in progress
-    const returnObject: MangaUpdates = {
-        'ids': []
-    }
-    //console.log(data)
-    //const updateManga = JSON.parse(data.match(regex['latest'])?.[1])
-    //for (const elem of updateManga) {
-    //    if (ids.includes(elem.IndexName) && time < new Date(elem.Date)) returnObject.ids.push(elem.IndexName)
-    //}
-    const rand = Math.round(Math.random() * (ids.length - 0 + 1) + 0)
-    for (let index = 0; index < rand; index++) {
-        returnObject.ids.push(ids[index]);
-    }
+export const parseUpdatedManga = ($: CheerioStatic, time: Date, ids: string[]): { updates: string[], loadNextPage: boolean } => { //work in progress
+    let foundIds: string[] = []
+        let passedReferenceTime = false
+        for (let item of $('div[id*="load_latest"] div[class="section__list-group-chapter"]').toArray()) {
+            let id = ($('a', item).attr('href') ?? '').replace('/manga/', '').split('/')[0]
+            let date = ($('span[class="section__list-group-date"]',item).text() ?? 0);
 
-    return returnObject
+            let mangaTime = new Date(0)
+
+            if(date == "Aujourd'hui")
+                mangaTime = new Date()
+            else
+                if(date == "Hier")
+                {
+                let currentDate = new Date()
+                   mangaTime = new Date(currentDate.setDate(currentDate.getDate() - 1))
+                }
+                else
+                {
+                    const timeStr = date.split(' ')[1].split('/')
+                    mangaTime = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]))
+                }
+
+
+
+            passedReferenceTime = mangaTime <= time
+            if (!passedReferenceTime) {
+                if (ids.includes(id)) {
+                    foundIds.push(id)
+                }
+            } else break
+        }
+        console.log(foundIds)
+        if (!passedReferenceTime) {
+            return {updates: foundIds, loadNextPage: true}
+        } else {
+            return {updates: foundIds, loadNextPage: false}
+        }
 }
 
 export const searchMetadata = (query: SearchRequest) => {//not work

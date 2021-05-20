@@ -18,7 +18,7 @@ import {
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: 'Dev:0.1.25',
+    version: 'Dev:0.1.26',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -108,10 +108,21 @@ import {
         headers : this.constructHeaders({}),
         method,
       })
+      for (const elem of ids)
+      {
+        console.log("ids: " + elem)
+      }
+
       const response = await this.requestManager.schedule(request, 1)
       const $ = this.cheerio.load(response.data)
 
       const updatedManga = parseUpdatedManga($, time, ids);
+
+      for (const elem of updatedManga.ids)
+      {
+        console.log("update?: " + elem)
+      }
+
       if (updatedManga.ids.length > 0) {
         mangaUpdatesFoundCallback(createMangaUpdates({
             ids: updatedManga.ids

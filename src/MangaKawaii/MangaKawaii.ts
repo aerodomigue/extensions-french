@@ -18,7 +18,7 @@ import {
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: 'Dev:0.1.21',
+    version: 'Dev:0.1.22',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -70,17 +70,17 @@ import {
         headers : this.constructHeaders({}),
         param: mangaId
       })
-
       let response = await this.requestManager.schedule(request, 1)
+      
       const re = RegExp('[\'"](/arrilot/load-widget.*?)[\'"]')
       const chapterRequest = response.data.match(re)
-
       const requestChapter = createRequestObject({
         url: `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`,
         method,
         headers : this.constructHeaders({}),
         })
       request.url = `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`
+     if(chapterRequest)
       response = await this.requestManager.schedule(requestChapter, 1)
 
       const $ = this.cheerio.load(response.data)

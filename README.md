@@ -1,9 +1,16 @@
 [![Bundle and Publish Sources](https://github.com/aerodomigue/extensions-promises/actions/workflows/main.yml/badge.svg)](https://github.com/aerodomigue/extensions-promises/actions/workflows/main.yml)
 # French Source/Source Francaise
-use: `https://aerodomigue.github.io/extensions-promises/` for add source
 
-Website:
-> MangaKawaii.com
+[Click ici](https://paperback.moe/addRepo/?name=Aerodomigue%27s%20Extensions&url=https%253A%252F%25aerodomigue.github.io%252Fextensions-french) pour ajouter ce dépo a Paperback!
+
+ou utilise `https://aerodomigue.github.io/extensions-french` pour ajouter la source manuellement
+
+#### Website:
+> MangaKawaii.com : 90% fonctionnel
+
+
+#### Branches:
+- Stable est la branche ou je pousse tous le code en lien a l'extension.
 
 
 

@@ -2,19 +2,6 @@ import { Chapter, ChapterDetails, HomeSection, LanguageCode, Manga, MangaStatus,
 
 export const CDN_URL = "https://cdn.mangakawaii.net"
 
-export type RegexIdMatch = {
-    [id: string]: RegExp
-}
-export const regex: RegexIdMatch = {
-    'hot_update': /vm.HotUpdateJSON = (.*);/,
-    'latest': /vm.LatestJSON = (.*);/,
-    'recommended': /vm.RecommendationJSON = (.*);/,
-    'new_titles': /vm.NewSeriesJSON = (.*);/,
-    'chapters': /vm.Chapters = (.*);/,
-    'directory': /vm.FullDirectory = (.*);/,
-    'directory_image_host': /<img ng-src=\"(.*)\//
-}
-
 export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => { //work
     const json = $('[type=application\\/ld\\+json]').last().html() ?? '' // next, get second child  
     const parsedJson = JSON.parse(json)
@@ -186,7 +173,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
         const manga: MangaTile[] = []
         for (const elem of sectionData[i]) {
             const id = `${encodeURI(elem.url?.replace('/manga/', '')) ?? ''}`
-            const title = elem.title
+            const title = elem.title.replace(/&#039;/g, '\'')
             const image = encodeURI(`${CDN_URL}/uploads${elem.url}/cover/cover_250x350.jpg`)
             manga.push(createMangaTile({
                 id,

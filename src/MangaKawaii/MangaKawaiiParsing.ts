@@ -21,7 +21,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
     const entity = parsedJson['@graph']
     const desc = `${entity[1]['description']}`
     const image = encodeURI((entity[0]['url'] ?? "" ))
-    const titles = [`${entity[1]['name'] ?? [""]}`]
+    const titles = [`${entity[1]['name'] ?? [""]}`.replace(/&#039;/g, '\'')]
     const author = `${$('span[itemprop="author"]').text()}`
     const rating = Number($('strong[id="avgrating"]').text())
 
@@ -135,7 +135,7 @@ export const parseSearch = ($: CheerioStatic, metadata: any, ML_DOMAIN: string):
     for (const elem of titles) {
             mangaTiles.push(createMangaTile({
                 id: encodeURI(`${elem}`.replace('/manga/', '')),
-                title: createIconText({ text: `${$('h1 + ul a[href*="' + elem +'"]').text()}`}),
+                title: createIconText({ text: `${$('h1 + ul a[href*="' + elem +'"]').text()}`.replace(/&#039;/g, '\'')}),
                 image: `${CDN_URL}/uploads${elem}/cover/cover_250x350.jpg`,
             }))
     }

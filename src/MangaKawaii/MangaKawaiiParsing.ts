@@ -8,7 +8,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
     const entity = parsedJson['@graph']
     const desc = `${entity[1]['description']}`
     const image = encodeURI((entity[0]['url'] ?? "" ))
-    const titles = [`${entity[1]['name'] ?? [""]}`.replace(/&#039;/g, '\`')]
+    const titles = [`${entity[1]['name'] ?? [""]}`.replace(/&#039;/g, '\'')]
     const author = `${$('span[itemprop="author"]').text()}`
     const rating = Number($('strong[id="avgrating"]').text())
 
@@ -122,7 +122,7 @@ export const parseSearch = ($: CheerioStatic, metadata: any, ML_DOMAIN: string):
     for (const elem of titles) {
             mangaTiles.push(createMangaTile({
                 id: encodeURI(`${elem}`.replace('/manga/', '')),
-                title: createIconText({ text: `${$('h1 + ul a[href*="' + elem +'"]').text()}`.replace(/&#039;/g, '\`')}),
+                title: createIconText({ text: `${$('h1 + ul a[href*="' + elem +'"]').text()}`.replace(/&#039;/g, '\'')}),
                 image: `${CDN_URL}/uploads${elem}/cover/cover_250x350.jpg`,
             }))
     }
@@ -173,7 +173,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
         const manga: MangaTile[] = []
         for (const elem of sectionData[i]) {
             const id = `${encodeURI(elem.url?.replace('/manga/', '')) ?? ''}`
-            const title = `${elem.title}`.replace(/&#039;/g, '\`')
+            const title = `${elem.title}`.replace(/&#039;/g, '\'')
             const image = encodeURI(`${CDN_URL}/uploads${elem.url}/cover/cover_250x350.jpg`)
             manga.push(createMangaTile({
                 id,

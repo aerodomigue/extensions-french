@@ -135,10 +135,11 @@ export const parseSearch = ($: CheerioStatic, metadata: any, ML_DOMAIN: string):
     for (const elem of titles) {
             mangaTiles.push(createMangaTile({
                 id: encodeURI(`${elem}`.replace('/manga/', '')),
-                title: createIconText({ text: encodeURI($('h1 + ul a[href*="' + elem +'"]').text()) }),
+                title: createIconText({ text: $('h1 + ul a[href*="' + elem +'"]').text() }),
                 image: `${CDN_URL}/uploads${elem}/cover/cover_250x350.jpg`,
             }))
     }
+    console.log(mangaTiles)
     return createPagedResults({
         results: mangaTiles
     })

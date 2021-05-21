@@ -1,9 +1,8 @@
 import { Chapter, ChapterDetails, HomeSection, LanguageCode, Manga, MangaStatus, MangaTile, MangaUpdates, PagedResults, SearchRequest, TagSection } from "paperback-extensions-common"
-
-export const CDN_URL = "https://cdn.mangakawaii.net"
+import { CDN_URL } from "./UrlMangaKawaii"
 
 export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => { //work
-    const json = $('[type=application\\/ld\\+json]').last().html() ?? '' // next, get second child  
+    const json = $('[type=application\\/ld\\+json]').last().html() ?? '' // next, get second json child  
     const parsedJson = JSON.parse(json)
     const entity = parsedJson['@graph']
     const desc = `${entity[1]['description']}`
@@ -11,6 +10,10 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
     const titles = [`${entity[1]['name'] ?? [""]}`.replace(/&#039;/g, '\'')]
     const author = `${$('span[itemprop="author"]').text()}`
     const rating = Number($('strong[id="avgrating"]').text())
+
+    const tagSections: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: [] }),
+    createTagSection({ id: '1', label: 'format', tags: [] })]
+    tagSections[0].tags = $('a[itemprop="genre"]').toArray().map((elem) => createTag({ id: $(elem).text(), label: $(elem).text() }))
 
     let status = MangaStatus.ONGOING
     status = $('.row').text().includes('En Cours') ? MangaStatus.ONGOING : MangaStatus.COMPLETED
@@ -20,7 +23,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
         image , //'https://cdn.mangakawaii.net/uploads/manga/kill-the-hero/cover/cover_250x350.jpg',
         status , //1
         author , //'D-Dart',
-        //tags: tagSections,
+        tags: tagSections,
         desc , //'Nous sommes dans un monde semblable à un jeu, où donjons, monstres et joueurs apparaissent. Dans un monde dans lequel je suis le seul à connaître la v...',
         hentai: false,
         rating, //4.19
@@ -33,7 +36,6 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
     const chapters: Chapter[] = []
 
     for (const elem of chaptersHTML) {
-      //let nbrChap = $('td[class="table__chapter px-0 text-nowrap"]', elem).html()
       const id = `${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', '')
       const nbrChap = id.split('/')
       const chapNum = Number( nbrChap ? nbrChap[2] : 0 )
@@ -69,7 +71,7 @@ export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId
     return chapterDetails
 }
 
-export const parseUpdatedManga = ($: CheerioStatic, time: Date, ids: string[]): { updates: string[], loadNextPage: boolean } => { //work in progress
+export const parseUpdatedManga = ($: CheerioStatic, time: Date, ids: string[]): { updates: string[], loadNextPage: boolean } => { //i don't if it work x) ...
     let foundIds: string[] = []
         let passedReferenceTime = false
         for (let item of $('div[id*="load_latest"] div[class="section__list-group-chapter"]').toArray()) {
@@ -146,7 +148,6 @@ export const parseTags = (data: any): TagSection[] => {//not work
 export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: (section: HomeSection) => void): void => {//work
     const latestSection = createHomeSection({ id: 'latest', title: 'LATEST UPDATES', view_more: false })
     const hotSection = createHomeSection({ id: 'hot_manga', title: 'TOP HITS', view_more: false })
-    //const topTenNotecSection = createHomeSection({ id: 'toptennote', title: 'TOP 10 NOTES', view_more: false })
     const topTenView = createHomeSection({ id: 'hot_ten_view', title: 'TOP 10', view_more: false })
 
     const titlesRecommanded = $('div[id*="load_latest"] h4').toArray().map((elem) => {return $(elem).text()})
@@ -155,18 +156,14 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
     const titlesHot = $('div[class="hot-manga__item-name"]').toArray().map((elem) => {return $(elem).text()})
     const urlImagesHot = $('a.hot-manga__item').toArray().map((elem) => {return $(elem).attr('href') ?? ""})
 
-    //const titleTopTenNotecSection = $('div[class="col-6"] div[class="media-thumbnail__name"]').toArray().map((elem) => {return $(elem).text()})
-    //const urlTopTenNotecSection =  $('div[class="col-6"] a').toArray().map((elem) => {return $(elem).attr('href') ?? ""}) 
-
     const titleTopTenView = $('div[id="top_views"] a div[class="media-thumbnail__name"]').toArray().map((elem) => {return $(elem).text()})
     const urlTopTenView = $('div[id="top_views"] a').toArray().map((elem) => {return $(elem).attr('href') ?? ""}) 
 
     const dictLaster = dictParser(titlesRecommanded, urlImagesRecommanded)
     const dictHot = dictParser(titlesHot, urlImagesHot)
-    //const dictTopTen = dictParser(titleTopTenNotecSection, urlTopTenNotecSection)
     const dictTopTenView = dictParser(titleTopTenView, urlTopTenView)
-    const sections = [latestSection, hotSection, /*topTenNotecSection,*/ topTenView]
-    const sectionData = [dictLaster, dictHot, /*dictTopTen,*/ dictTopTenView]
+    const sections = [latestSection, hotSection, topTenView]
+    const sectionData = [dictLaster, dictHot, dictTopTenView]
 
     for (const [i, section] of sections.entries()) {
         sectionCallback(section)
@@ -185,7 +182,6 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
     }
 }
 
-
     function dictParser(titleArrat: string[], urlArray: string[])
     {
         let dict = [] 
@@ -197,35 +193,3 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
         }
         return dict
     }
-
-//export const parseViewMore = (data: any, homepageSectionId: string): PagedResults | null => { //not work
-    //const manga: MangaTile[] = []
-    //const mangaIds: Set<string> = new Set<string>()
-    //if (!regex[homepageSectionId]) return null
-    //const items = JSON.parse((data.match(regex[homepageSectionId]))?.[1])
-    
-    //for (const item of items) {
-    //    const id = item.IndexName
-    //    if (!mangaIds.has(id)) {
-    //        const title = item.SeriesName
-    //        const image = `${CDN_URL}/${id}.jpg`
-    //        let time = (new Date(item.Date)).toDateString()
-    //        time = time.slice(0, time.length - 5)
-    //        time = time.slice(4, time.length)
-
-    //        manga.push(createMangaTile({
-    //            id,
-    //            image,
-    //           title: createIconText({ text: title }),
-    //            secondaryText: homepageSectionId !== 'new_titles' ? createIconText({ text: time, icon: 'clock.fill' }) : undefined
-    //        }))
-    //        mangaIds.add(id)
-    //    }
-    //}
-
-    // This source parses JSON and never requires additional pages
-    //return createPagedResults({
-    //   results: manga
-    //})
-    //return null
-//}

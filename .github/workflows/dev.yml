@@ -1,13 +1,13 @@
 on:
   push:
     branches:
-      - stable
+      - mangakawaii-dev
   pull_request:
       types: [closed]
       branches:
-          - stable
+          - mangakawaii-dev
 
-name: Bundle and Publish Sources
+name: Bundle and Publish Sources DEV
 jobs:
   build:
     name: Bundle and Publish Sources
@@ -28,6 +28,7 @@ jobs:
       - run: npm install
       - run: npm run bundle
       - run: npx typedoc -out bundles/docs
+      - run: mkdir dev && mv bundles/* dev/ && mv dev bundles/
         continue-on-error: true
 
       - name: Deploy
@@ -37,3 +38,4 @@ jobs:
           BRANCH: gh-pages
           FOLDER: bundles
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CLEAR_GLOBS_FILE: ".clear-target-files"

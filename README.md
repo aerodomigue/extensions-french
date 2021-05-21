@@ -1,9 +1,18 @@
 [![Bundle and Publish Sources](https://github.com/aerodomigue/extensions-promises/actions/workflows/main.yml/badge.svg)](https://github.com/aerodomigue/extensions-promises/actions/workflows/main.yml)
 # French Source/Source Francaise
 
-[Clic ici](https://paperback.moe/addRepo/?name=French%20Source%27s%20Extensions&url=https%3A%2F%2Faerodomigue.github.io%2Fextensions-french) pour ajouter ce dépo a Paperback!
+- ### Stable:
+[Clic ici](https://paperback.moe/addRepo/?name=French%20Source%27s%20Extensions&url=https%3A%2F%2Faerodomigue.github.io%2Fextensions-french%2Fstable) pour ajouter ce dépo a Paperback!
 
-ou utilise `https://aerodomigue.github.io/extensions-french` pour ajouter la source manuellement
+ou utilise `https://aerodomigue.github.io/extensions-french/stable` pour ajouter la source manuellement
+
+- ### Dev:
+[Clic ici](https://paperback.moe/addRepo/?name=Dev%20French%20Source%27s%20Extensions&url=https%3A%2F%2Faerodomigue.github.io%2Fextensions-french%2Fdev) pour ajouter ce dépo a Paperback!
+
+ou utilise `https://aerodomigue.github.io/extensions-french/dev` pour ajouter la source manuellement
+
+___
+
 
 #### Website:
 > MangaKawaii.com : 90% fonctionnel
@@ -11,6 +20,7 @@ ou utilise `https://aerodomigue.github.io/extensions-french` pour ajouter la sou
 
 #### Branches:
 - Stable est la branche ou je pousse tous le code en lien a l'extension.
+- Mangakawaii-dev est la branche de développement ou il y a le travail en cours de développement 
 
 
 

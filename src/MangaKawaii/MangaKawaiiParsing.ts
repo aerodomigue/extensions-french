@@ -36,8 +36,8 @@ export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {
     const chapters: Chapter[] = []
 
     for (const elem of chaptersHTML) {
-      const id = `${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', '')
-      const nbrChap = id.split('/')
+      const id = `${$('a[href*=manga] i', elem)}`
+      const nbrChap = id.split(' ')
       const chapNum = Number( nbrChap ? nbrChap[2] : 0 )
       const name = ($("td.table__chapter:has(span)", elem).text().trim() + ", team: " + $("td.table__user:has(a)", elem).text().trim())
       const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.')
@@ -66,7 +66,8 @@ export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId
     const chapterDetails = createChapterDetails({
       id: chapterId,
       mangaId: mangaId,
-      pages, longStrip: false
+      pages, 
+      longStrip: false
     })
     return chapterDetails
 }

@@ -19,7 +19,7 @@ import {
   const headers = { "content-type": "application/x-www-form-urlencoded" }
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: 'Dev:1.0.3',
+    version: 'Stable:1.0.5',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -30,16 +30,12 @@ import {
     sourceTags: [
       {
         text: "Notifications",
-        type: TagType.YELLOW
+        type: TagType.GREEN
       },
       {
         text: "Cloudflare",
         type: TagType.RED
-      },
-      /*{
-        text: "development in progress",
-        type: TagType.YELLOW
-      }*/
+      }
     ]
   }
 

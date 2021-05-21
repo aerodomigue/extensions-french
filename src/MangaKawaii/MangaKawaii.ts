@@ -18,7 +18,7 @@ import {
   const method = 'GET'
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: 'Dev:0.1.29',
+    version: 'Dev:0.1.30',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -44,7 +44,7 @@ import {
 
   export class MangaKawaii extends Source {
     getMangaShareUrl(mangaId: string): string | null { return `${ML_DOMAIN}/manga/${mangaId}` }
-    userAgent: string = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/8$userAgentRandomizer1.0.4$userAgentRandomizer3.1$userAgentRandomizer2 Safari/537.36"
+    userAgent: string = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
 
     requestManager = createRequestManager({
       requestsPerSecond: 1,
@@ -59,6 +59,7 @@ import {
         param: mangaId
       })
       const response = await this.requestManager.schedule(request, 1)
+      console.log(response)
       const $ = this.cheerio.load(response.data)
       return parseMangaDetails($, mangaId)
     }

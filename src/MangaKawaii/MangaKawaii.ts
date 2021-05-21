@@ -16,9 +16,10 @@ import {
   import { ML_DOMAIN } from "./UrlMangaKawaii"
 
   const method = 'GET'
+  const headers = { "content-type": "application/x-www-form-urlencoded" }
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: 'Dev:0.1.35',
+    version: 'Stable:1.0.3',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -35,31 +36,27 @@ import {
         text: "Cloudflare",
         type: TagType.RED
       },
-      {
+      /*{
         text: "development in progress",
         type: TagType.YELLOW
-      }
+      }*/
     ]
   }
 
   export class MangaKawaii extends Source {
     getMangaShareUrl(mangaId: string): string | null { return `${ML_DOMAIN}/manga/${mangaId}` }
-    userAgent: string = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.212 Safari/537.36"
-
-    requestManager = createRequestManager({
-      requestsPerSecond: 1,
-      requestTimeout: 15000,
-    })
+    userAgent: string =  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) ' + 
+                         `Chrome/8${Math.floor(Math.random() * 9)}.0.4${Math.floor(Math.random() * (999 - 100) + 100)}.1${Math.floor(Math.random() * (99 - 10) + 10)} Safari/537.36`
   
     async getMangaDetails(mangaId: string): Promise<Manga> {
       const request = createRequestObject({
         url: `${ML_DOMAIN}/manga/`,
         method,
-        headers : this.constructHeaders({}),
+        headers,
         param: mangaId
       })
-      const response = await this.requestManager.schedule(request, 1)
-      console.log(response)
+      const response = await this.requestManager.schedule(request, 3)
+      console.log(response.status)
       const $ = this.cheerio.load(response.data)
       return parseMangaDetails($, mangaId)
     }
@@ -68,17 +65,17 @@ import {
       const request = createRequestObject({
         url: `${ML_DOMAIN}/manga/`,
         method,
-        headers : this.constructHeaders({}),
+        headers,
         param: mangaId
       })
-      let response = await this.requestManager.schedule(request, 1)
+      let response = await this.requestManager.schedule(request, 3)
       
       const re = RegExp('[\'"](/arrilot/load-widget.*?)[\'"]')
       const chapterRequest = response.data.match(re)
       const requestChapter = createRequestObject({
         url: `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`,
         method,
-        headers : this.constructHeaders({}),
+        headers,
         })
       request.url = `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`
      if(chapterRequest)
@@ -91,12 +88,12 @@ import {
     async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
       const request = createRequestObject({
         url: `${ML_DOMAIN}/manga`,
-        headers : this.constructHeaders({}),
+        headers ,
         method,
         param: chapterId
       })
   
-      const response = await this.requestManager.schedule(request, 1)
+      const response = await this.requestManager.schedule(request, 3)
       const $ = this.cheerio.load(response.data)
       return parseChapterDetails($, mangaId, chapterId)
     }
@@ -105,10 +102,10 @@ import {
  
       const request = createRequestObject({
         url: `${ML_DOMAIN}/`,
-        headers : this.constructHeaders({}),
+        headers ,
         method,
       })
-      let data = await this.requestManager.schedule(request, 1)
+      let data = await this.requestManager.schedule(request, 3)
       let $ = this.cheerio.load(data.data)
 
       let updatedManga = parseUpdatedManga($, time, ids)
@@ -124,11 +121,11 @@ import {
       const metadata = searchMetadata(query);
       const request = createRequestObject({
         url: `${ML_DOMAIN}/search`,
-        headers : this.constructHeaders({}),
+        headers ,
         method,
         param: `?query=${metadata.query}&search_type=${metadata.search_type}`
       })
-      const response = await this.requestManager.schedule(request, 1)
+      const response = await this.requestManager.schedule(request, 3)
       const $ = this.cheerio.load(response.data)
       return parseSearch($, metadata, ML_DOMAIN)
     }
@@ -137,10 +134,10 @@ import {
       const request = createRequestObject({
         url: `${ML_DOMAIN}/search/`,
         method,
-        headers : this.constructHeaders({}),
+        headers ,
       })
   
-      const response = await this.requestManager.schedule(request, 1)
+      const response = await this.requestManager.schedule(request, 3)
       return parseTags(response.data);
     }
   
@@ -150,39 +147,17 @@ import {
         method,
       })
 
-      const response = await this.requestManager.schedule(request, 1)
+      const response = await this.requestManager.schedule(request, 3)
 
       const $ = this.cheerio.load(response.data)
       parseHomeSections($, response.data, sectionCallback);
     }
 
-    constructHeaders(headers: any, refererPath?: string): any {
-      if(this.userAgent !== '') {
-          headers["user-agent"] = this.userAgent
-      }
-      headers["referer"] = `${ML_DOMAIN}${refererPath ?? ''}`
-      headers["content-type"] = "application/x-www-form-urlencoded"
-      return headers
-  }
-  
-    globalRequestHeaders(): RequestHeaders {
-      if(this.userAgent !== '') {
-          return {
-              "referer": ML_DOMAIN,
-              "user-agent": this.userAgent,
-          }
-      }
-      else {
-          return {
-              "referer": ML_DOMAIN,
-          }
-      }
-  }
-
-    CloudFlareError(status: any) {
-      if(status == 503) {
-          throw new Error('CLOUDFLARE BYPASS ERROR:\nPlease go to Settings > Sources > MangaKawaii and press Cloudflare Bypass')
-      }
+  globalRequestHeaders(): RequestHeaders {
+    return {
+      referer: ML_DOMAIN,
+      userAgent: this.userAgent
+    }
   }
   
     getCloudflareBypassRequest() {

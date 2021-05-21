@@ -158,13 +158,13 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
     //const titleTopTenNotecSection = $('div[class="col-6"] div[class="media-thumbnail__name"]').toArray().map((elem) => {return $(elem).text()})
     //const urlTopTenNotecSection =  $('div[class="col-6"] a').toArray().map((elem) => {return $(elem).attr('href') ?? ""}) 
 
-    const titTopTenView = $('div[id="top_views"] a div[class="media-thumbnail__name"]').toArray().map((elem) => {return $(elem).text()})
+    const titleTopTenView = $('div[id="top_views"] a div[class="media-thumbnail__name"]').toArray().map((elem) => {return $(elem).text()})
     const urlTopTenView = $('div[id="top_views"] a').toArray().map((elem) => {return $(elem).attr('href') ?? ""}) 
 
     const dictLaster = dictParser(titlesRecommanded, urlImagesRecommanded)
     const dictHot = dictParser(titlesHot, urlImagesHot)
     //const dictTopTen = dictParser(titleTopTenNotecSection, urlTopTenNotecSection)
-    const dictTopTenView = dictParser(titTopTenView, urlTopTenView)
+    const dictTopTenView = dictParser(titleTopTenView, urlTopTenView)
     const sections = [latestSection, hotSection, /*topTenNotecSection,*/ topTenView]
     const sectionData = [dictLaster, dictHot, /*dictTopTen,*/ dictTopTenView]
 
@@ -173,7 +173,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
         const manga: MangaTile[] = []
         for (const elem of sectionData[i]) {
             const id = `${encodeURI(elem.url?.replace('/manga/', '')) ?? ''}`
-            const title = elem.title.replace(/&#039;/g, '\'')
+            const title = `${elem.title}`.replace(/&#039;/g, '\'')
             const image = encodeURI(`${CDN_URL}/uploads${elem.url}/cover/cover_250x350.jpg`)
             manga.push(createMangaTile({
                 id,

@@ -1,5 +1,4 @@
 import {
-<<<<<<< HEAD
   Source,
   Manga,
   Chapter,
@@ -15,57 +14,12 @@ import {
 } from "paperback-extensions-common"
 import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, searchMetadata } from "./MangaKawaiiParsing"
 import { ML_DOMAIN } from "./UrlMangaKawaii"
-=======
-    Source,
-    Manga,
-    Chapter,
-    ChapterDetails,
-    HomeSection,
-    SearchRequest,
-    TagSection,
-    PagedResults,
-    SourceInfo,
-    MangaUpdates,
-    TagType,
-    RequestHeaders
-  } from "paperback-extensions-common"
-  import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, searchMetadata } from "./MangaKawaiiParsing"
-  import { ML_DOMAIN } from "./UrlMangaKawaii"
-
-  const method = 'GET'
-  const headers = { "content-type": "application/x-www-form-urlencoded" }
-  
-  export const MangaKawaiiInfo: SourceInfo = {
-    version: 'Dev:1.0.3',
-    name: 'MangaKawaii',
-    icon: 'icon.png',
-    author: 'aerodomigue',
-    authorWebsite: 'https://github.com/aerodomigue',
-    description: 'Extension that pulls manga from Mangakawaii, includes Search and Updated manga fetching',
-    hentaiSource: false,
-    websiteBaseURL: ML_DOMAIN,
-    sourceTags: [
-      {
-        text: "Notifications",
-        type: TagType.YELLOW
-      },
-      {
-        text: "Cloudflare",
-        type: TagType.RED
-      },
-      /*{
-        text: "development in progress",
-        type: TagType.YELLOW
-      }*/
-    ]
-  }
->>>>>>> parent of ccf09b6 (First Stable Version YEAHHH, but i don't now if 'notification update' work xD)
 
 const method = 'GET'
 const headers = { "content-type": "application/x-www-form-urlencoded" }
 
 export const MangaKawaiiInfo: SourceInfo = {
-  version: 'Stable:1.0.11',
+  version: 'Stable:1.0.22',
   name: 'MangaKawaii',
   icon: 'icon.png',
   author: 'aerodomigue',
@@ -119,12 +73,12 @@ export class MangaKawaii extends Source {
       method,
       headers,
       })
-    request.url = `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`
    if(chapterRequest)
-    response = await this.requestManager.schedule(requestChapter, 1)
+    response = await this.requestManager.schedule(requestChapter, 3)
+    const lang = requestChapter.url.includes('/fr/') ? true : false
 
     const $ = this.cheerio.load(response.data)
-    return parseChapters($, mangaId)
+    return parseChapters($, mangaId, lang)
   }
 
   async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
@@ -197,7 +151,7 @@ export class MangaKawaii extends Source {
 
 globalRequestHeaders(): RequestHeaders {
   return {
-    referer: ML_DOMAIN,
+    referer: ML_DOMAIN + "/lang/fr",
     userAgent: this.userAgent
   }
 }

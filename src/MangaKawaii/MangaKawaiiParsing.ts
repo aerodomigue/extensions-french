@@ -31,26 +31,33 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
     return manga
 }
 
-export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {  //work
+export const parseChapters = ($: CheerioStatic, mangaId: string, langFr: boolean): Chapter[] => {  //work
     const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => {return $(elem) })
     const chapters: Chapter[] = []
 
+    let nbrline = chaptersHTML.length
     for (const elem of chaptersHTML) {
-      const id = `${$('a[href*=manga] i', elem)}`
-      const nbrChap = id.split(' ')
-      const chapNum = Number( nbrChap ? nbrChap[2] : 0 )
+      const id = `${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', '')
+      let nbrChap = $("td.table__chapter span", elem).text()
+      let nbrString =  nbrChap.match(/(\d+)(\.\d+)?/g)?.[1] ?? "" + nbrline
+      console.log(nbrline)
+      const chapNum = parseFloat(nbrString)
       const name = ($("td.table__chapter:has(span)", elem).text().trim() + ", team: " + $("td.table__user:has(a)", elem).text().trim())
       const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.')
       let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]))
+      let lang = LanguageCode.FRENCH
+      if(!langFr)
+        lang = LanguageCode.ENGLISH
 
       chapters.push(createChapter({
         id,
         mangaId,
         name,
         chapNum,
-        langCode: LanguageCode.FRENCH,
+        langCode: lang,
         time
       }))
+      nbrline--
     }
     return chapters;
 }

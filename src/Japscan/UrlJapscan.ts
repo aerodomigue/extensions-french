@@ -1,0 +1,1 @@
+export const ML_DOMAIN = 'https://www.japscan.ws'

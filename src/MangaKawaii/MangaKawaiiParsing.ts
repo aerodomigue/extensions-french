@@ -33,7 +33,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
 
 export const parseChapters = (responseArray: CheerioStatic[], mangaId: string): Chapter[] => {  //work
     const chapters: Chapter[] = []
-    console.log(responseArray)
+    console.log("test")
     for (let $ of responseArray)
     {
         const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => {return $(elem) })

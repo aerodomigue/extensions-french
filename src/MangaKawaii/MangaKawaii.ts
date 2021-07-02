@@ -19,7 +19,7 @@ import {
   const headers = { "content-type": "application/x-www-form-urlencoded" }
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: 'Dev:1.0.8',
+    version: 'Dev:1.0.9',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -73,7 +73,7 @@ import {
       const re = RegExp('[\'"](/arrilot/load-widget.*?)[\'"]')
       const chapterRequest = response.data.match(re) ?? []
       const responseArray = []
-
+      console.log("--------------------receive chap detail")
       for(let i = 1; i < chapterRequest.length; i++)
       {
         const requestChapter = createRequestObject({

@@ -19,7 +19,7 @@ import {
   const headers = { "content-type": "application/x-www-form-urlencoded" }
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: 'Stable:1.0.7',
+    version: 'Stable:1.0.10',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',

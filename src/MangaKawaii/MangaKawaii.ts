@@ -19,7 +19,7 @@ import {
   const headers = { "content-type": "application/x-www-form-urlencoded" }
   
   export const MangaKawaiiInfo: SourceInfo = {
-    version: 'Dev:1.0.5',
+    version: 'Dev:1.0.6',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -77,11 +77,10 @@ import {
       for(let i = 1; i < chapterRequest.length; i++)
       {
         const requestChapter = createRequestObject({
-          url: `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`,
+          url: `${ML_DOMAIN}${chapterRequest? chapterRequest[i] : ''}`,
           method,
           headers,
           })
-        request.url = `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`
        if(chapterRequest)
         response = await this.requestManager.schedule(requestChapter, 1)
   

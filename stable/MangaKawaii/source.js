@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.11',
+    version: 'Stable:1.0.12',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -398,9 +398,8 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
                 method,
                 headers,
             });
-            request.url = `${UrlMangaKawaii_1.ML_DOMAIN}${chapterRequest ? chapterRequest[1] : ''}`;
             if (chapterRequest)
-                response = yield this.requestManager.schedule(requestChapter, 1);
+                response = yield this.requestManager.schedule(requestChapter, 3);
             const $ = this.cheerio.load(response.data);
             return MangaKawaiiParsing_1.parseChapters($, mangaId);
         });
@@ -525,8 +524,9 @@ exports.parseChapters = ($, mangaId) => {
     const chapters = [];
     for (const elem of chaptersHTML) {
         const id = `${$('a[href*=manga] i', elem)}`;
-        const nbrChap = id.split(' ');
-        const chapNum = Number(nbrChap ? nbrChap[2] : 0);
+        const nbrChap = $("td.table__chapter:has(span)", elem).text().trim().split(' ');
+        //const chapNum = Number( nbrChap ? nbrChap[2] : 0 )
+        const chapNum = 785;
         const name = ($("td.table__chapter:has(span)", elem).text().trim() + ", team: " + $("td.table__user:has(a)", elem).text().trim());
         const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.');
         let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]));

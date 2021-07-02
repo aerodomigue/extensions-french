@@ -1,11 +1,11 @@
 on:
   push:
     branches:
-      - mangakawaii-dev
+      - stable
   pull_request:
       types: [closed]
       branches:
-          - mangakawaii-dev
+          - stable
 
 name: Bundle and Publish Sources STABLE
 jobs:

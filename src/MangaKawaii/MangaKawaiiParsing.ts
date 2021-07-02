@@ -31,26 +31,29 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
     return manga
 }
 
-export const parseChapters = ($: CheerioStatic, mangaId: string): Chapter[] => {  //work
-    const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => {return $(elem) })
+export const parseChapters = (responseArray: CheerioStatic[], mangaId: string): Chapter[] => {  //work
     const chapters: Chapter[] = []
+    for (let $ of responseArray)
+    {
+        const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => {return $(elem) })
 
-    for (const elem of chaptersHTML) {
-      const id = `${$('a[href*=manga] i', elem)}`
-      const nbrChap = id.split(' ')
-      const chapNum = Number( nbrChap ? nbrChap[2] : 0 )
-      const name = ($("td.table__chapter:has(span)", elem).text().trim() + ", team: " + $("td.table__user:has(a)", elem).text().trim())
-      const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.')
-      let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]))
+        for (const elem of chaptersHTML) {
+        const id = `${$('a[href*=manga] i', elem)}`
+        const nbrChap = $("td.table__chapter:has(span)", elem).text().trim().split(' ')
+        const chapNum = Number( nbrChap ? nbrChap[2] : 0 )
+        const name = ($("td.table__chapter:has(span)", elem).text().trim() + ", team: " + $("td.table__user:has(a)", elem).text().trim())
+        const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.')
+        let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]))
 
-      chapters.push(createChapter({
-        id,
-        mangaId,
-        name,
-        chapNum,
-        langCode: LanguageCode.FRENCH,
-        time
-      }))
+        chapters.push(createChapter({
+            id,
+            mangaId,
+            name,
+            chapNum,
+            langCode: LanguageCode.FRENCH,
+            time
+        }))
+        }
     }
     return chapters;
 }

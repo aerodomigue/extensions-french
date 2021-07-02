@@ -40,12 +40,13 @@ export const parseChapters = (responseArray: CheerioStatic[], mangaId: string): 
         console.log(chaptersHTML)
 
         for (const elem of chaptersHTML) {
-        const id = `${$('a[href*=manga] i', elem)}`
-        const nbrChap = $("td.table__chapter:has(span)", elem).text().trim().split(' ')
-        const chapNum = Number( nbrChap ? nbrChap[1] : 0 )
-        const name = ($("td.table__chapter:has(span)", elem).text().trim() + ", team: " + $("td.table__user:has(a)", elem).text().trim())
-        const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.')
-        let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]))
+            //let nbrChap = $('td[class="table__chapter px-0 text-nowrap"]', elem).html()
+            const id = `${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', '')
+            const nbrChap = id.split('/')
+            const chapNum = Number( nbrChap ? nbrChap[2] : 0 )
+            const name = ($("td.table__chapter:has(span)", elem).text().trim() + ", team: " + $("td.table__user:has(a)", elem).text().trim())
+            const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.')
+            let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]))
 
         chapters.push(createChapter({
             id,

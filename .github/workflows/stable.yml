@@ -7,7 +7,7 @@ on:
       branches:
           - stable
 
-name: Bundle and Publish Sources STABLE
+name: Bundle and Publish Sources DEV
 jobs:
   build:
     name: Bundle and Publish Sources
@@ -28,7 +28,7 @@ jobs:
       - run: npm install
       - run: npm run bundle
       - run: npx typedoc -out bundles/docs
-      - run: mkdir stable && mv bundles/* stable/ && mv stable bundles/
+      - run: mkdir dev && mv bundles/* dev/ && mv dev bundles/
         continue-on-error: true
 
       - name: Deploy

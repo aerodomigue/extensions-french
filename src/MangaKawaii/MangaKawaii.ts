@@ -1,4 +1,5 @@
 import {
+<<<<<<< HEAD
   Source,
   Manga,
   Chapter,
@@ -14,6 +15,51 @@ import {
 } from "paperback-extensions-common"
 import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, searchMetadata } from "./MangaKawaiiParsing"
 import { ML_DOMAIN } from "./UrlMangaKawaii"
+=======
+    Source,
+    Manga,
+    Chapter,
+    ChapterDetails,
+    HomeSection,
+    SearchRequest,
+    TagSection,
+    PagedResults,
+    SourceInfo,
+    MangaUpdates,
+    TagType,
+    RequestHeaders
+  } from "paperback-extensions-common"
+  import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, searchMetadata } from "./MangaKawaiiParsing"
+  import { ML_DOMAIN } from "./UrlMangaKawaii"
+
+  const method = 'GET'
+  const headers = { "content-type": "application/x-www-form-urlencoded" }
+  
+  export const MangaKawaiiInfo: SourceInfo = {
+    version: 'Dev:1.0.3',
+    name: 'MangaKawaii',
+    icon: 'icon.png',
+    author: 'aerodomigue',
+    authorWebsite: 'https://github.com/aerodomigue',
+    description: 'Extension that pulls manga from Mangakawaii, includes Search and Updated manga fetching',
+    hentaiSource: false,
+    websiteBaseURL: ML_DOMAIN,
+    sourceTags: [
+      {
+        text: "Notifications",
+        type: TagType.YELLOW
+      },
+      {
+        text: "Cloudflare",
+        type: TagType.RED
+      },
+      /*{
+        text: "development in progress",
+        type: TagType.YELLOW
+      }*/
+    ]
+  }
+>>>>>>> parent of ccf09b6 (First Stable Version YEAHHH, but i don't now if 'notification update' work xD)
 
 const method = 'GET'
 const headers = { "content-type": "application/x-www-form-urlencoded" }

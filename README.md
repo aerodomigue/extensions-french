@@ -15,7 +15,7 @@ ___
 
 
 #### Website:
-> MangaKawaii.com
+> MangaKawaii.com : 90% fonctionnel
 
 
 #### Branches:

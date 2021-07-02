@@ -36,6 +36,7 @@ export const parseChapters = (responseArray: CheerioStatic[], mangaId: string): 
     for (let $ of responseArray)
     {
         const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => {return $(elem) })
+        console.log(chaptersHTML)
 
         for (const elem of chaptersHTML) {
         const id = `${$('a[href*=manga] i', elem)}`

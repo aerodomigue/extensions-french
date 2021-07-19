@@ -10,7 +10,8 @@ import {
   SourceInfo,
   MangaUpdates,
   TagType,
-  RequestHeaders
+  RequestHeaders,
+  Cookie
 } from "paperback-extensions-common"
 import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, searchMetadata } from "./MangaKawaiiParsing"
 import { ML_DOMAIN } from "./UrlMangaKawaii"
@@ -19,7 +20,7 @@ const method = 'GET'
 const headers = { "content-type": "application/x-www-form-urlencoded" }
 
 export const MangaKawaiiInfo: SourceInfo = {
-  version: 'Stable:1.0.22',
+  version: 'Stable:1.0.27',
   name: 'MangaKawaii',
   icon: 'icon.png',
   author: 'aerodomigue',
@@ -97,7 +98,7 @@ export class MangaKawaii extends Source {
   async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void> {
 
     const request = createRequestObject({
-      url: `${ML_DOMAIN}/`,
+      url: `${ML_DOMAIN}`,
       headers ,
       method,
     })
@@ -151,7 +152,7 @@ export class MangaKawaii extends Source {
 
 globalRequestHeaders(): RequestHeaders {
   return {
-    referer: ML_DOMAIN + "/lang/fr",
+    referer: `${ML_DOMAIN}/lang/fr`,
     userAgent: this.userAgent
   }
 }

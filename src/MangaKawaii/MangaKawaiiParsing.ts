@@ -46,7 +46,7 @@ export const parseChapters = ($: CheerioStatic, mangaId: string, langFr: boolean
       const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.')
       let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]))
       let lang = LanguageCode.FRENCH
-      if(!langFr)
+      if(langFr)
         lang = LanguageCode.ENGLISH
 
       chapters.push(createChapter({

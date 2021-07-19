@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.18',
+    version: 'Stable:1.0.19',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -400,8 +400,9 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
             });
             if (chapterRequest)
                 response = yield this.requestManager.schedule(requestChapter, 3);
+            const lang = requestChapter.url.includes('\/fr\/');
             const $ = this.cheerio.load(response.data);
-            return MangaKawaiiParsing_1.parseChapters($, mangaId);
+            return MangaKawaiiParsing_1.parseChapters($, mangaId, lang);
         });
     }
     getChapterDetails(mangaId, chapterId) {
@@ -519,7 +520,7 @@ exports.parseMangaDetails = ($, mangaId) => {
     });
     return manga;
 };
-exports.parseChapters = ($, mangaId) => {
+exports.parseChapters = ($, mangaId, langFr) => {
     var _a, _b;
     const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => { return $(elem); });
     const chapters = [];
@@ -533,12 +534,15 @@ exports.parseChapters = ($, mangaId) => {
         const name = ($("td.table__chapter:has(span)", elem).text().trim() + ", team: " + $("td.table__user:has(a)", elem).text().trim());
         const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.');
         let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]));
+        let lang = paperback_extensions_common_1.LanguageCode.FRENCH;
+        if (!langFr)
+            lang = paperback_extensions_common_1.LanguageCode.ENGLISH;
         chapters.push(createChapter({
             id,
             mangaId,
             name,
             chapNum,
-            langCode: paperback_extensions_common_1.LanguageCode.FRENCH,
+            langCode: lang,
             time
         }));
         nbrline--;

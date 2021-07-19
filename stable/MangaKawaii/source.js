@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.26',
+    version: 'Stable:1.0.27',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -476,11 +476,6 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
             referer: `${UrlMangaKawaii_1.ML_DOMAIN}/lang/fr`,
             userAgent: this.userAgent
         };
-    }
-    globalRequestCookies() {
-        return [
-            { name: "mk_search_type", value: "manga", domain: "www.mangakawaii.net" }
-        ];
     }
     getCloudflareBypassRequest() {
         return createRequestObject({

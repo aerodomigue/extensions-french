@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.25',
+    version: 'Stable:1.0.26',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -473,14 +473,13 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
     }
     globalRequestHeaders() {
         return {
-            referer: UrlMangaKawaii_1.ML_DOMAIN,
+            referer: `${UrlMangaKawaii_1.ML_DOMAIN}/lang/fr`,
             userAgent: this.userAgent
         };
     }
     globalRequestCookies() {
         return [
-            { name: "mangakawaii_session", value: "eyJpdiI6Ijl4SzBRdFkyQk1NOTFrNnEvUlRoSWc9PSIsInZhbHVlIjoidWV4R3U0VSs5ZS8wRDR2RjljK0cxdnFVWWViNmFLRDlRRm9QbEFqTHdKSHA5cDQzT2FhZWcxR0VsYnAxNE9iYkpLM3NZN3pBUnFCZHJCb1Nic3JYc1Z6NXUyRHhGUlhSM3h6QUkvNVFBRjEyWlpYa0xxMWoxbU9xUWhGV3JLOHoiLCJtYWMiOiI3MTAzYjE2NmI1MDk2ZmIxNTRjZTI1MjRlZDc2NjI3OWZhMDYyY2VmNTU4ZWEyZWEyNDU0NTY5YzQ5NWM0ZGVlIn0%3D", domain: "www.mangakawaii.net" },
-            { name: "mk_search_type", value: "manga", domain: "www.mangakawaii.net" },
+            { name: "mk_search_type", value: "manga", domain: "www.mangakawaii.net" }
         ];
     }
     getCloudflareBypassRequest() {

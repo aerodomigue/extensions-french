@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.23',
+    version: 'Stable:1.0.24',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -463,7 +463,7 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
     getHomePageSections(sectionCallback) {
         return __awaiter(this, void 0, void 0, function* () {
             const request = createRequestObject({
-                url: `${UrlMangaKawaii_1.ML_DOMAIN}/lang/fr"`,
+                url: `${UrlMangaKawaii_1.ML_DOMAIN}/lang/fr`,
                 method,
             });
             const response = yield this.requestManager.schedule(request, 3);

@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.15',
+    version: 'Stable:1.0.16',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -528,7 +528,7 @@ exports.parseChapters = ($, mangaId) => {
         const id = `${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', '');
         let nbrChap = $("td.table__chapter span", elem).text();
         let n = nbrChap.lastIndexOf('Chapitre');
-        let result = parseFloat(nbrChap.substring(n + 1).replace(/[,-]/g, ".").trim());
+        let result = nbrChap.substring(n + 1).replace(/[,-]/g, ".").trim();
         console.log(nbrChap);
         console.log(result);
         const chapNum = Number(nbrline++);

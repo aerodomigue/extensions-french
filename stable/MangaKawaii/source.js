@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.22',
+    version: 'Stable:1.0.23',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -421,7 +421,7 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
     filterUpdatedManga(mangaUpdatesFoundCallback, time, ids) {
         return __awaiter(this, void 0, void 0, function* () {
             const request = createRequestObject({
-                url: `${UrlMangaKawaii_1.ML_DOMAIN}/`,
+                url: `${UrlMangaKawaii_1.ML_DOMAIN}/lang/fr/`,
                 headers,
                 method,
             });
@@ -463,7 +463,7 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
     getHomePageSections(sectionCallback) {
         return __awaiter(this, void 0, void 0, function* () {
             const request = createRequestObject({
-                url: `${UrlMangaKawaii_1.ML_DOMAIN}`,
+                url: `${UrlMangaKawaii_1.ML_DOMAIN}/lang/fr"`,
                 method,
             });
             const response = yield this.requestManager.schedule(request, 3);
@@ -535,7 +535,7 @@ exports.parseChapters = ($, mangaId, langFr) => {
         const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.');
         let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]));
         let lang = paperback_extensions_common_1.LanguageCode.FRENCH;
-        if (!langFr)
+        if (langFr)
             lang = paperback_extensions_common_1.LanguageCode.ENGLISH;
         chapters.push(createChapter({
             id,

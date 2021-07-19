@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.20',
+    version: 'Stable:1.0.21',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -535,8 +535,8 @@ exports.parseChapters = ($, mangaId, langFr) => {
         const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.');
         let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]));
         let lang = paperback_extensions_common_1.LanguageCode.FRENCH;
-        if (!langFr)
-            lang = paperback_extensions_common_1.LanguageCode.ENGLISH;
+        //if(!langFr)
+        //  lang = LanguageCode.ENGLISH
         chapters.push(createChapter({
             id,
             mangaId,

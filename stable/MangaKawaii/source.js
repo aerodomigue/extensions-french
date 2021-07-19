@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.19',
+    version: 'Stable:1.0.20',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -400,7 +400,7 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
             });
             if (chapterRequest)
                 response = yield this.requestManager.schedule(requestChapter, 3);
-            const lang = requestChapter.url.includes('\/fr\/');
+            const lang = requestChapter.url.includes('fr\/') ? true : false;
             const $ = this.cheerio.load(response.data);
             return MangaKawaiiParsing_1.parseChapters($, mangaId, lang);
         });

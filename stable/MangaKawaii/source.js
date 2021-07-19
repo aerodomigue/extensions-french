@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.21',
+    version: 'Stable:1.0.22',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',

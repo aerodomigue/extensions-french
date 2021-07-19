@@ -400,7 +400,7 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
             });
             if (chapterRequest)
                 response = yield this.requestManager.schedule(requestChapter, 3);
-            const lang = requestChapter.url.includes('fr\/') ? true : false;
+            const lang = requestChapter.url.includes('/fr/') ? true : false;
             const $ = this.cheerio.load(response.data);
             return MangaKawaiiParsing_1.parseChapters($, mangaId, lang);
         });
@@ -473,7 +473,7 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
     }
     globalRequestHeaders() {
         return {
-            referer: UrlMangaKawaii_1.ML_DOMAIN,
+            referer: UrlMangaKawaii_1.ML_DOMAIN + "/lang/fr",
             userAgent: this.userAgent
         };
     }
@@ -535,8 +535,8 @@ exports.parseChapters = ($, mangaId, langFr) => {
         const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.');
         let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]));
         let lang = paperback_extensions_common_1.LanguageCode.FRENCH;
-        //if(!langFr)
-        //  lang = LanguageCode.ENGLISH
+        if (!langFr)
+            lang = paperback_extensions_common_1.LanguageCode.ENGLISH;
         chapters.push(createChapter({
             id,
             mangaId,

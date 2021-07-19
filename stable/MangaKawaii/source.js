@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.16',
+    version: 'Stable:1.0.17',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -520,6 +520,7 @@ exports.parseMangaDetails = ($, mangaId) => {
     return manga;
 };
 exports.parseChapters = ($, mangaId) => {
+    var _a, _b;
     const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => { return $(elem); });
     const chapters = [];
     let nbrline = 0;
@@ -527,10 +528,10 @@ exports.parseChapters = ($, mangaId) => {
         //let nbrChap = $('td[class="table__chapter px-0 text-nowrap"]', elem).html()
         const id = `${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', '');
         let nbrChap = $("td.table__chapter span", elem).text();
-        let n = nbrChap.lastIndexOf('Chapitre');
-        let result = nbrChap.substring(n + 1).replace(/[,-]/g, ".").trim();
+        let nbrString = (_b = (_a = nbrChap.match(/(\d+)(\.\d+)?/g)) === null || _a === void 0 ? void 0 : _a[1]) !== null && _b !== void 0 ? _b : "" + nbrline;
         console.log(nbrChap);
-        console.log(result);
+        console.log(nbrString);
+        let test = parseFloat(nbrString);
         const chapNum = Number(nbrline++);
         const name = ($("td.table__chapter:has(span)", elem).text().trim() + ", team: " + $("td.table__user:has(a)", elem).text().trim());
         const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.');

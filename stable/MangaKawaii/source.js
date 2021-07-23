@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.44',
+    version: 'Stable:1.0.45',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -527,10 +527,10 @@ exports.parseChapters = ($, mangaId, langFr) => {
     let nbrline = chaptersHTML.length;
     for (const elem of chaptersHTML) {
         const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''));
-        const name = ($("td span", elem).text().trim() + ", team: " + $("td a)", elem).text().trim());
-        let nbrChap = $("td.table__chapter span", elem).text().substring(1).split(' ');
+        const name = $("td span", elem).text().trim();
+        let nbrChap = $("td span", elem).text().substring(1).split(' ');
         const chapNum = parseFloat((_a = nbrChap === null || nbrChap === void 0 ? void 0 : nbrChap[1]) !== null && _a !== void 0 ? _a : "" + nbrline);
-        const timeStr = $("td.table__date.small", elem).text().trim().split('.');
+        const timeStr = $("td", elem).next().next().next().next().next().text().trim().split('.');
         let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]));
         let lang = paperback_extensions_common_1.LanguageCode.FRENCH;
         chapters.push(createChapter({

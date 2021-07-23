@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.40',
+    version: 'Stable:1.0.41',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -502,7 +502,6 @@ exports.parseMangaDetails = ($, mangaId) => {
     const titles = [`${(_c = entity[1]['name']) !== null && _c !== void 0 ? _c : [""]}`.replace(/&#039;/g, '\'')];
     const author = `${$('span[itemprop="author"]').text()}`;
     const rating = Number($('strong[id="avgrating"]').text());
-    console.log(mangaId);
     const tagSections = [createTagSection({ id: '0', label: 'genres', tags: [] }),
         createTagSection({ id: '1', label: 'format', tags: [] })];
     tagSections[0].tags = $('a[itemprop="genre"]').toArray().map((elem) => createTag({ id: $(elem).text(), label: $(elem).text() }));
@@ -519,7 +518,6 @@ exports.parseMangaDetails = ($, mangaId) => {
         hentai: false,
         rating,
     });
-    console.log(manga);
     return manga;
 };
 exports.parseChapters = ($, mangaId, langFr) => {
@@ -528,7 +526,7 @@ exports.parseChapters = ($, mangaId, langFr) => {
     const chapters = [];
     let nbrline = chaptersHTML.length;
     for (const elem of chaptersHTML) {
-        const id = `${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', '');
+        const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''));
         let nbrChap = $("td.table__chapter span", elem).text();
         let nbrString = nbrChap.match(/(\d+)(\.\d+)?/g);
         console.log(nbrline);
@@ -607,6 +605,7 @@ exports.searchMetadata = (query) => {
     };
 };
 exports.parseSearch = ($, metadata, ML_DOMAIN) => {
+    var _a;
     const mangaTiles = [];
     const titles = $('ul[class="pl-3"] li div h4 a[href*=manga]').toArray().map((elem) => { return $(elem); });
     for (const elem of titles) {
@@ -616,12 +615,12 @@ exports.parseSearch = ($, metadata, ML_DOMAIN) => {
         console.log("url: " + url);
         console.log("id: " + encodeURI(title.replace('/manga/', '')));
         mangaTiles.push(createMangaTile({
-            id: encodeURI(url.replace('/manga/', '')),
+            id: `${(_a = encodeURI(url === null || url === void 0 ? void 0 : url.replace('/manga/', ''))) !== null && _a !== void 0 ? _a : ''}`,
             title: createIconText({ text: title }),
             image: `${UrlMangaKawaii_1.CDN_URL}/uploads${url}/cover/cover_thumb.jpg`,
         }));
     }
-    console.log(mangaTiles);
+    console.log("nbr search: " + titles.length);
     return createPagedResults({
         results: mangaTiles
     });

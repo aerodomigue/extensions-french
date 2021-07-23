@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.31',
+    version: 'Stable:1.0.32',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -608,11 +608,14 @@ exports.parseSearch = ($, metadata, ML_DOMAIN) => {
     const mangaTiles = [];
     const titles = $('ul[class="pl-3"] a[href*=manga]').toArray().map((elem) => { return $(elem); });
     for (const elem of titles) {
-        console.log("search:" + $(elem).attr("href"));
+        const title = $(elem).text().replace(/&#039;/g, '\'');
+        const url = `${$(elem).attr("href")}`;
+        console.log("search: " + title);
+        console.log("url: " + url);
         mangaTiles.push(createMangaTile({
-            id: encodeURI(`${$(elem).attr("href")}`.replace('/manga/', '')),
-            title: createIconText({ text: `${$(elem).text()}`.replace(/&#039;/g, '\'') }),
-            image: `${UrlMangaKawaii_1.CDN_URL}/uploads${$(elem).attr("href")}/cover/cover_250x350.jpg`,
+            id: encodeURI(title.replace('/manga/', '')),
+            title: createIconText({ text: title }),
+            image: `${UrlMangaKawaii_1.CDN_URL}/uploads${url}/cover/cover_250x350.jpg`,
         }));
     }
     console.log(mangaTiles);

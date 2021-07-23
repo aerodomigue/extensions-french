@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.33',
+    version: 'Stable:1.0.34',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -449,17 +449,17 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
             return MangaKawaiiParsing_1.parseSearch($, metadata, UrlMangaKawaii_1.ML_DOMAIN);
         });
     }
-    getTags() {
-        return __awaiter(this, void 0, void 0, function* () {
-            const request = createRequestObject({
-                url: `${UrlMangaKawaii_1.ML_DOMAIN}/search/`,
-                method,
-                headers,
-            });
-            const response = yield this.requestManager.schedule(request, 3);
-            return MangaKawaiiParsing_1.parseTags(response.data);
-        });
-    }
+    /*
+      async getTags(): Promise<TagSection[] | null> {
+        const request = createRequestObject({
+          url: `${ML_DOMAIN}/search/`,
+          method,
+          headers ,
+        })
+    
+        const response = await this.requestManager.schedule(request, 3)
+        return parseTags(response.data);
+      }*/
     getHomePageSections(sectionCallback) {
         return __awaiter(this, void 0, void 0, function* () {
             const request = createRequestObject({
@@ -606,7 +606,7 @@ exports.searchMetadata = (query) => {
 };
 exports.parseSearch = ($, metadata, ML_DOMAIN) => {
     const mangaTiles = [];
-    const titles = $('ul[class="pl-3"] a[href*=manga]').toArray().map((elem) => { return $(elem); });
+    const titles = $('ul[class="pl-3"] li div h4 a[href*=manga]').toArray().map((elem) => { return $(elem); });
     for (const elem of titles) {
         const title = $(elem).text().replace(/&#039;/g, '\'');
         const url = `${$(elem).attr("href")}`;

@@ -1,22 +1,23 @@
 import { Chapter, ChapterDetails, HomeSection, LanguageCode, Manga, MangaStatus, MangaTile, MangaUpdates, PagedResults, SearchRequest, TagSection } from "paperback-extensions-common"
 import { CDN_URL } from "./UrlMangaKawaii"
+import * as cheerio from 'cheerio';
 
 export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => { //work
-    const json = $('[type=application\\/ld\\+json]').last().html() ?? '' // next, get second json child  
-    const parsedJson = JSON.parse(json)
-    const entity = parsedJson['@graph']
-    const desc = `${entity[1]['description']}`
-    const image = encodeURI((entity[0]['url'] ?? "" ))
-    const titles = [`${entity[1]['name'] ?? [""]}`.replace(/&#039;/g, '\'')]
-    const author = `${$('span[itemprop="author"]').text()}`
-    const rating = Number($('strong[id="avgrating"]').text())
+    // const json = $('[type=application\\/ld\\+json]').last().html() ?? '' // next, get second json child  
+    // const parsedJson = JSON.parse(json)
+    // const entity = parsedJson['@graph']
+    const desc = $("dd.text-justify.text-break").text().toString();
+    const image = $("div.manga-view__header-image").find("img").attr("src") || "";
+    const titles = [$($("span[itemprop*=name]").get(1)).text().toString() || ""];
+    const author = $("a[href*=author]").text().toString();
+    const rating = Number($("strong[id*=avgrating]").text())
 
     const tagSections: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: [] }),
     createTagSection({ id: '1', label: 'format', tags: [] })]
     tagSections[0].tags = $('a[itemprop="genre"]').toArray().map((elem) => createTag({ id: $(elem).text(), label: $(elem).text() }))
 
     let status = MangaStatus.ONGOING
-    status = $('.row').text().includes('En Cours') ? MangaStatus.ONGOING : MangaStatus.COMPLETED
+    status = MangaStatus.ONGOING // OLD $('.row').text().includes('En Cours') ? MangaStatus.ONGOING : MangaStatus.COMPLETED // WIP not work
     const manga = createManga({
         id: mangaId, //kill-the-hero
         titles , //[ 'Kill the Hero' ]
@@ -37,17 +38,13 @@ export const parseChapters = ($: CheerioStatic, mangaId: string, langFr: boolean
 
     let nbrline = chaptersHTML.length
     for (const elem of chaptersHTML) {
-      const id = `${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', '')
-      let nbrChap = $("td.table__chapter span", elem).text()
-      let nbrString =  nbrChap.match(/(\d+)(\.\d+)?/g)?.[1] ?? "" + nbrline
-      console.log(nbrline)
-      const chapNum = parseFloat(nbrString)
-      const name = ($("td.table__chapter:has(span)", elem).text().trim() + ", team: " + $("td.table__user:has(a)", elem).text().trim())
-      const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.')
-      let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]))
+      const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''))
+      const name = $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,''); // Convert `\nChap.      \n2      \n  \n` -> `Chap. 2`
+      let nbrChap = name.split(' ')[1]
+      const chapNum = parseFloat(nbrChap + nbrline)
+      const timeStr = $("td.table__date", elem).first().text().trim().split('\n')[0].split('.');
+      let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]))
       let lang = LanguageCode.FRENCH
-      if(langFr)
-        lang = LanguageCode.ENGLISH
 
       chapters.push(createChapter({
         id,
@@ -64,12 +61,15 @@ export const parseChapters = ($: CheerioStatic, mangaId: string, langFr: boolean
 
 export const parseChapterDetails = ($: CheerioStatic, mangaId: string, chapterId: string): ChapterDetails => { //work
     const pages: string[] = []
-    const urlPageArray =  $('div[id="all3"] img').map((i, x) => $(x).attr('src')).toArray()
+    const chapterSlug = $.html().match(/var chapter_slug = "([^"]*)";/)![1];
+    const mangaSlug = $.html().match(/var oeuvre_slug = "([^"]*)";/)![1];
 
-
-    for (const page of urlPageArray) {
-        pages.push(`${page}`.replace(/\s/g, ""))
+    var page;
+    var reg = RegExp('page_image":"([^"]*)"', 'g');
+    while((page = reg.exec($.html())) !== null) {
+        pages.push(CDN_URL + "/uploads/manga/" + mangaSlug + "/chapters_fr/" + chapterSlug + "/" + page[1])
     }
+
     const chapterDetails = createChapterDetails({
       id: chapterId,
       mangaId: mangaId,
@@ -127,16 +127,21 @@ export const searchMetadata = (query: SearchRequest) => {//not work
 
 export const parseSearch = ($: CheerioStatic, metadata: any, ML_DOMAIN: string): PagedResults => {//work
     const mangaTiles: MangaTile[] = []
-    const titles = $('h1 + ul a[href*=manga]').toArray().map((elem) => {return $(elem).attr('href') })
+    const titles = $('ul[class="pl-3"] li div h4 a[href*=manga]').toArray().map((elem) => {return $(elem) })
 
     for (const elem of titles) {
+        const title = $(elem).text().replace(/&#039;/g, '\'')
+        const url = `${$(elem).attr("href")}`
+        // console.log("search: " + title) 
+        // console.log("url: " + url) 
+        // console.log("id: " + encodeURI(title.replace('/manga/', ''))) 
             mangaTiles.push(createMangaTile({
-                id: encodeURI(`${elem}`.replace('/manga/', '')),
-                title: createIconText({ text: `${$('h1 + ul a[href*="' + elem +'"]').text()}`.replace(/&#039;/g, '\'')}),
-                image: `${CDN_URL}/uploads${elem}/cover/cover_250x350.jpg`,
+                id: `${encodeURI(url?.replace('/manga/', '')) ?? ''}`,
+                title: createIconText({ text: title}),
+                image: `${CDN_URL}/uploads${url}/cover/cover_thumb.jpg`,
             }))
     }
-    console.log(mangaTiles)
+    // console.log("nbr search: " + titles.length)
     return createPagedResults({
         results: mangaTiles
     })
@@ -179,7 +184,7 @@ export const parseHomeSections = ($: CheerioStatic, data: any, sectionCallback: 
         for (const elem of sectionData[i]) {
             const id = `${encodeURI(elem.url?.replace('/manga/', '')) ?? ''}`
             const title = `${elem.title}`.replace(/&#039;/g, '\'')
-            const image = encodeURI(`${CDN_URL}/uploads${elem.url}/cover/cover_250x350.jpg`)
+            const image = encodeURI(`${CDN_URL}/uploads${elem.url}/cover/cover_thumb.jpg`)
             manga.push(createMangaTile({
                 id,
                 image,

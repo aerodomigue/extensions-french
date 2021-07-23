@@ -1,5 +1,5 @@
 import cheerio from 'cheerio'
-import { APIWrapper, Source } from 'paperback-extensions-common';
+import { APIWrapper, SearchRequest, Source } from 'paperback-extensions-common';
 import { MangaKawaii } from '../MangaKawaii/MangaKawaii';
 
 describe('MangaKawaiiTest Tests', function () {
@@ -15,14 +15,14 @@ describe('MangaKawaiiTest Tests', function () {
      * Try to choose a manga which is updated frequently, so that the historical checking test can 
      * return proper results, as it is limited to searching 30 days back due to extremely long processing times otherwise.
      */
-    var mangaId = "kill-the-hero";
+    var mangaId = "level-drain";
 
     it("Retrieve Manga Details", async () => {
         let details = await wrapper.getMangaDetails(source, mangaId);
         expect(details, "No results found with test-defined ID [" + mangaId + "]").to.exist;
 
         let data = details;
-        expect(data.id, "Missing ID").to.be.not.empty;
+        expect(data.relatedIds, "Missing ID").to.be.not.empty;
         expect(data.image, "Missing Image").to.be.not.empty;
         expect(data.status, "Missing Status").to.exist;
         expect(data.author, "Missing Author").to.be.not.empty;
@@ -43,7 +43,7 @@ describe('MangaKawaiiTest Tests', function () {
 
     it("Get Chapter Details", async () => {
         let chapters = await wrapper.getChapters(source, mangaId);
-        let data = await wrapper.getChapterDetails(source, mangaId, chapters[3].id);
+        let data = await wrapper.getChapterDetails(source, mangaId, chapters[1].id);
 
         expect(data, "No server response").to.exist;
         expect(data, "Empty server response").to.not.be.empty;
@@ -54,9 +54,10 @@ describe('MangaKawaiiTest Tests', function () {
     });
 
     it("Testing search", async () => {
-        let testSearch = createSearchRequest({
+        let testSearch: SearchRequest = {
             title: 'One piece',
-        });
+            parameters: {}
+        };
 
         let search = await wrapper.searchRequest(source, testSearch, 1);
         let result = search.results[0];
@@ -74,10 +75,10 @@ describe('MangaKawaiiTest Tests', function () {
         expect(homePages, "No response from server").to.exist
     })
 
-    it("Testing Notifications", async () => {
-        let updates = await wrapper.filterUpdatedManga(source, new Date("2021-02-01"), [mangaId, mangaId, mangaId, mangaId, mangaId])
-        expect(updates, "No server response").to.exist
-        expect(updates, "Empty server response").to.not.be.empty
-        expect(updates[0], "No updates").to.not.be.empty;
-    })
+    // it("Testing Notifications", async () => {
+    //     let updates = await wrapper.filterUpdatedManga(source, new Date("2021-02-01"), [mangaId, mangaId, mangaId, mangaId, mangaId])
+    //     expect(updates, "No server response").to.exist
+    //     expect(updates, "Empty server response").to.not.be.empty
+    //     expect(updates[0], "No updates").to.not.be.empty;
+    // })
 })

@@ -11,22 +11,25 @@ import {
   MangaUpdates,
   TagType,
   RequestHeaders,
-  Cookie
+  Cookie,
+  ContentRating,
+  RequestManager,
+  Request,
+  Response
 } from "paperback-extensions-common"
 import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, searchMetadata } from "./MangaKawaiiParsing"
 import { ML_DOMAIN } from "./UrlMangaKawaii"
 
 const method = 'GET'
-const headers = { "content-type": "application/x-www-form-urlencoded" }
+const headers = { "content-type": "application/x-www-form-urlencoded", "accept-language" : "fr"}
 
 export const MangaKawaiiInfo: SourceInfo = {
-  version: 'Stable:1.0.27',
+  version: 'Stable:1.0.53',
   name: 'MangaKawaii',
   icon: 'icon.png',
   author: 'aerodomigue',
   authorWebsite: 'https://github.com/aerodomigue',
   description: 'Extension that pulls manga from Mangakawaii, includes Search and Updated manga fetching',
-  hentaiSource: false,
   websiteBaseURL: ML_DOMAIN,
   sourceTags: [
     {
@@ -37,13 +40,39 @@ export const MangaKawaiiInfo: SourceInfo = {
       text: "Cloudflare",
       type: TagType.RED
     }
-  ]
+  ],
+  contentRating: ContentRating.EVERYONE
 }
 
 export class MangaKawaii extends Source {
-  getMangaShareUrl(mangaId: string): string | null { return `${ML_DOMAIN}/manga/${mangaId}` }
-  userAgent: string =  'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) ' + 
-                       `Chrome/8${Math.floor(Math.random() * 9)}.0.4${Math.floor(Math.random() * (999 - 100) + 100)}.1${Math.floor(Math.random() * (99 - 10) + 10)} Safari/537.36`
+  getSearchResults(query: SearchRequest, metadata: any): Promise<PagedResults> {
+    throw new Error("Method not implemented.")
+  }
+  getMangaShareUrl(mangaId: string): string { return `${ML_DOMAIN}/manga/${mangaId}` }
+  userAgent: string = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) ' + `Chrome/8${Math.floor(Math.random() * 9)}.0.4${Math.floor(Math.random() * (999 - 100) + 100)}.1${Math.floor(Math.random() * (99 - 10) + 10)} Safari/537.36` 
+
+  requestManager = createRequestManager({
+    requestsPerSecond: 3,
+    requestTimeout: 15000,
+    interceptor: {
+        interceptRequest: async (request: Request): Promise<Request> => {
+
+            request.headers = {
+                ...(request.headers ?? {}),
+                ...{
+                    ...(this.userAgent && { 'user-agent': this.userAgent }),
+                    'referer': `${ML_DOMAIN}/`
+                }
+            }
+
+            return request
+        },
+
+        interceptResponse: async (response: Response): Promise<Response> => {
+            return response
+        }
+    }
+});
 
   async getMangaDetails(mangaId: string): Promise<Manga> {
     const request = createRequestObject({
@@ -66,20 +95,22 @@ export class MangaKawaii extends Source {
       param: mangaId
     })
     let response = await this.requestManager.schedule(request, 3)
+
+  //   var page = require('webpage').create();
     
-    const re = RegExp('[\'"](/arrilot/load-widget.*?)[\'"]')
-    const chapterRequest = response.data.match(re)
-    const requestChapter = createRequestObject({
-      url: `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`,
-      method,
-      headers,
-      })
-   if(chapterRequest)
-    response = await this.requestManager.schedule(requestChapter, 3)
-    const lang = requestChapter.url.includes('/fr/') ? true : false
+  //   const re = RegExp('[\'"](/arrilot/load-widget.*?)[\'"]')
+  //   const chapterRequest = response.data.match(re)
+  //   const requestChapter = createRequestObject({
+  //     url: `${ML_DOMAIN}${chapterRequest? chapterRequest[1] : ''}`,
+  //     method,
+  //     headers,
+  //     })
+  //  if(chapterRequest)
+  //   response = await this.requestManager.schedule(requestChapter, 3)
+    // const lang = requestChapter.url.includes('/fr/') ? true : false
 
     const $ = this.cheerio.load(response.data)
-    return parseChapters($, mangaId, lang)
+    return parseChapters($, mangaId, true)
   }
 
   async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {
@@ -126,7 +157,7 @@ export class MangaKawaii extends Source {
     const $ = this.cheerio.load(response.data)
     return parseSearch($, metadata, ML_DOMAIN)
   }
-
+/*
   async getTags(): Promise<TagSection[] | null> {
     const request = createRequestObject({
       url: `${ML_DOMAIN}/search/`,
@@ -136,7 +167,7 @@ export class MangaKawaii extends Source {
 
     const response = await this.requestManager.schedule(request, 3)
     return parseTags(response.data);
-  }
+  }*/
 
   async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
     const request = createRequestObject({
@@ -152,8 +183,9 @@ export class MangaKawaii extends Source {
 
 globalRequestHeaders(): RequestHeaders {
   return {
-    referer: `${ML_DOMAIN}/lang/fr`,
-    userAgent: this.userAgent
+    referer: `${ML_DOMAIN}`,
+    userAgent: this.userAgent,
+    Accept: '*/*'
   }
 }
 

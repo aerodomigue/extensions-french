@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.42',
+    version: 'Stable:1.0.43',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -529,14 +529,11 @@ exports.parseChapters = ($, mangaId, langFr) => {
         const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''));
         let nbrChap = $("td.table__chapter span", elem).text();
         let nbrString = nbrChap.match(/(\d+)(\.\d+)?/g);
-        console.log(nbrline);
         const chapNum = parseFloat((_a = nbrString === null || nbrString === void 0 ? void 0 : nbrString[1]) !== null && _a !== void 0 ? _a : "" + nbrline);
-        const name = ($("td.table__chapter:has(span)", elem).text() + ", team: " + $("td.table__user:has(a)", elem).text());
-        const timeStr = $("td.table__date.small", elem).text().split(' ')[1].split('.');
-        let time = new Date(Date.parse(timeStr[2] + '-' + timeStr[1] + '-' + timeStr[0]));
+        const name = ($("td span", elem).text().trim() + ", team: " + $("td a", elem).text().trim());
+        const timeStr = $("td.table__date.small", elem).text().trim().split('.');
+        let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]));
         let lang = paperback_extensions_common_1.LanguageCode.FRENCH;
-        if (langFr)
-            lang = paperback_extensions_common_1.LanguageCode.ENGLISH;
         chapters.push(createChapter({
             id,
             mangaId,

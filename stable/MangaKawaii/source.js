@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.27',
+    version: 'Stable:1.0.28',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -606,7 +606,7 @@ exports.searchMetadata = (query) => {
 };
 exports.parseSearch = ($, metadata, ML_DOMAIN) => {
     const mangaTiles = [];
-    const titles = $('h1 + ul a[href*=manga]').toArray().map((elem) => { return $(elem).attr('href'); });
+    const titles = $('ul li a[href*=manga]').toArray().map((elem) => { return $(elem).attr('href'); });
     for (const elem of titles) {
         mangaTiles.push(createMangaTile({
             id: encodeURI(`${elem}`.replace('/manga/', '')),

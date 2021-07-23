@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.35',
+    version: 'Stable:1.0.36',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -502,6 +502,7 @@ exports.parseMangaDetails = ($, mangaId) => {
     const titles = [`${(_c = entity[1]['name']) !== null && _c !== void 0 ? _c : [""]}`.replace(/&#039;/g, '\'')];
     const author = `${$('span[itemprop="author"]').text()}`;
     const rating = Number($('strong[id="avgrating"]').text());
+    console.log(mangaId);
     const tagSections = [createTagSection({ id: '0', label: 'genres', tags: [] }),
         createTagSection({ id: '1', label: 'format', tags: [] })];
     tagSections[0].tags = $('a[itemprop="genre"]').toArray().map((elem) => createTag({ id: $(elem).text(), label: $(elem).text() }));
@@ -518,6 +519,7 @@ exports.parseMangaDetails = ($, mangaId) => {
         hentai: false,
         rating,
     });
+    console.log(manga);
     return manga;
 };
 exports.parseChapters = ($, mangaId, langFr) => {
@@ -612,6 +614,7 @@ exports.parseSearch = ($, metadata, ML_DOMAIN) => {
         const url = `${$(elem).attr("href")}`;
         console.log("search: " + title);
         console.log("url: " + url);
+        console.log("id: " + title.replace('/manga/', ''));
         mangaTiles.push(createMangaTile({
             id: title.replace('/manga/', ''),
             title: createIconText({ text: title }),

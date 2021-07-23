@@ -342,7 +342,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.32',
+    version: 'Stable:1.0.33',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -615,7 +615,7 @@ exports.parseSearch = ($, metadata, ML_DOMAIN) => {
         mangaTiles.push(createMangaTile({
             id: encodeURI(title.replace('/manga/', '')),
             title: createIconText({ text: title }),
-            image: `${UrlMangaKawaii_1.CDN_URL}/uploads${url}/cover/cover_250x350.jpg`,
+            image: `${UrlMangaKawaii_1.CDN_URL}/uploads${url}/cover/cover_thumb.jpg`,
         }));
     }
     console.log(mangaTiles);
@@ -656,7 +656,7 @@ exports.parseHomeSections = ($, data, sectionCallback) => {
         for (const elem of sectionData[i]) {
             const id = `${(_b = encodeURI((_a = elem.url) === null || _a === void 0 ? void 0 : _a.replace('/manga/', ''))) !== null && _b !== void 0 ? _b : ''}`;
             const title = `${elem.title}`.replace(/&#039;/g, '\'');
-            const image = encodeURI(`${UrlMangaKawaii_1.CDN_URL}/uploads${elem.url}/cover/cover_250x350.jpg`);
+            const image = encodeURI(`${UrlMangaKawaii_1.CDN_URL}/uploads${elem.url}/cover/cover_thumb.jpg`);
             manga.push(createMangaTile({
                 id,
                 image,

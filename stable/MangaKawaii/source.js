@@ -394,7 +394,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded", "accept-language": "fr" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.54',
+    version: 'Stable:1.0.55',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -601,7 +601,7 @@ const parseChapters = ($, mangaId, langFr) => {
             const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''));
             const name = ''; // $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,''); // Convert `\nChap.      \n2      \n  \n` -> `Chap. 2`
             let nbrChap = $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g, '').split(' ')[1];
-            const chapNum = parseFloat(nbrChap + nbrline);
+            const chapNum = parseFloat(nbrChap);
             const timeStr = $("td.table__date", elem).first().text().trim().split('\n')[0].split('.');
             let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]));
             let lang = paperback_extensions_common_1.LanguageCode.FRENCH;

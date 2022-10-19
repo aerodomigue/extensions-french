@@ -24,7 +24,7 @@ const method = 'GET'
 const headers = { "content-type": "application/x-www-form-urlencoded", "accept-language" : "fr"}
 
 export const MangaKawaiiInfo: SourceInfo = {
-  version: 'Stable:1.0.54',
+  version: 'Stable:1.0.55',
   name: 'MangaKawaii',
   icon: 'icon.png',
   author: 'aerodomigue',

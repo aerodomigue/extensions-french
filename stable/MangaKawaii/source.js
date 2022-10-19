@@ -420,21 +420,16 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
         this.requestManager = createRequestManager({
             requestsPerSecond: 3,
             requestTimeout: 15000,
-            // interceptor: {
-            //     interceptRequest: async (request: Request): Promise<Request> => {
-            //         request.headers = {
-            //             ...(request.headers ?? {}),
-            //             ...{
-            //                 ...(this.userAgent && { 'user-agent': this.userAgent }),
-            //                 'referer': `${ML_DOMAIN}/`
-            //             }
-            //         }
-            //         return request
-            //     },
-            //     interceptResponse: async (response: Response): Promise<Response> => {
-            //         return response
-            //     }
-            // }
+            interceptor: {
+                interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
+                    var _a;
+                    request.headers = Object.assign(Object.assign({}, ((_a = request.headers) !== null && _a !== void 0 ? _a : {})), Object.assign(Object.assign({}, (this.userAgent && { 'user-agent': this.userAgent })), { 'referer': `${UrlMangaKawaii_1.ML_DOMAIN}/` }));
+                    return request;
+                }),
+                interceptResponse: (response) => __awaiter(this, void 0, void 0, function* () {
+                    return response;
+                })
+            }
         });
     }
     getSearchResults(query, metadata) {

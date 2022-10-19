@@ -36,26 +36,42 @@ export const parseChapters = ($: CheerioStatic, mangaId: string, langFr: boolean
     const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => {return $(elem) })
     const chapters: Chapter[] = []
 
-    let nbrline = chaptersHTML.length
-    for (const elem of chaptersHTML) {
-      const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''))
-      const name = $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,''); // Convert `\nChap.      \n2      \n  \n` -> `Chap. 2`
-      let nbrChap = name.split(' ')[1]
-      const chapNum = parseFloat(nbrChap + nbrline)
-      const timeStr = $("td.table__date", elem).first().text().trim().split('\n')[0].split('.');
-      let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]))
-      let lang = LanguageCode.FRENCH
+    // Check if is licenced
+    const isLicenced = $("div[class*=ribbon__licensed]").text();
 
-      chapters.push(createChapter({
-        id,
-        mangaId,
-        name,
-        chapNum,
-        langCode: lang,
-        time
-      }))
-      nbrline--
+    if(isLicenced.length == 0) {
+        let nbrline = chaptersHTML.length
+        for (const elem of chaptersHTML) {
+        const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''))
+        const name = '';// $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,''); // Convert `\nChap.      \n2      \n  \n` -> `Chap. 2`
+        let nbrChap = $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,'').split(' ')[1]
+        const chapNum = parseFloat(nbrChap + nbrline)
+        const timeStr = $("td.table__date", elem).first().text().trim().split('\n')[0].split('.');
+        let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]))
+        let lang = LanguageCode.FRENCH
+
+        chapters.push(createChapter({
+            id,
+            mangaId,
+            name,
+            chapNum,
+            langCode: lang,
+            time
+        }))
+        nbrline--
+        }
+    } else {
+        chapters.push(createChapter({
+            id: mangaId + '/fr/0',
+            mangaId,
+            name: "L'oeuvre est licencié, tous les chapitres ont été retirés.",
+            chapNum: 0,
+            langCode: LanguageCode.FRENCH,
+            time: new Date()
+        }))
     }
+
+
     return chapters;
 }
 

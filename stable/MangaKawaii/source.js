@@ -394,7 +394,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded", "accept-language": "fr" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.52',
+    version: 'Stable:1.0.53',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',

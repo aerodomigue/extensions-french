@@ -392,9 +392,9 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const MangaKawaiiParsing_1 = require("./MangaKawaiiParsing");
 const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
-const headers = { "content-type": "application/x-www-form-urlencoded", "accept-language": "fr" };
+const headers = { "content-type": "application/x-www-form-urlencoded", "accept-language": "fr", 'referer': `${UrlMangaKawaii_1.ML_DOMAIN}/` };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.55',
+    version: 'Stable:1.0.56',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -471,7 +471,18 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
             //   response = await this.requestManager.schedule(requestChapter, 3)
             // const lang = requestChapter.url.includes('/fr/') ? true : false
             const $ = this.cheerio.load(response.data);
-            return (0, MangaKawaiiParsing_1.parseChapters)($, mangaId, true);
+            if ($(".table__chapter > a").length > 0) {
+                let someChapter = $($(".table__chapter > a").get(0)).attr('href');
+                const requestChapter = createRequestObject({
+                    url: `${UrlMangaKawaii_1.ML_DOMAIN}${someChapter}`,
+                    method,
+                    headers,
+                });
+                response = yield this.requestManager.schedule(requestChapter, 3);
+                const $someChapter = this.cheerio.load(response.data);
+                return (0, MangaKawaiiParsing_1.parseChapters)($, mangaId, true, $someChapter);
+            }
+            return (0, MangaKawaiiParsing_1.parseChapters)($, mangaId, true, undefined);
         });
     }
     getChapterDetails(mangaId, chapterId) {
@@ -590,30 +601,55 @@ const parseMangaDetails = ($, mangaId) => {
     return manga;
 };
 exports.parseMangaDetails = parseMangaDetails;
-const parseChapters = ($, mangaId, langFr) => {
+const parseChapters = ($, mangaId, langFr, $someChapter) => {
     const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => { return $(elem); });
     const chapters = [];
     // Check if is licenced
     const isLicenced = $("div[class*=ribbon__licensed]").text();
     if (isLicenced.length == 0) {
-        let nbrline = chaptersHTML.length;
-        for (const elem of chaptersHTML) {
-            const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''));
-            const name = ''; // $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,''); // Convert `\nChap.      \n2      \n  \n` -> `Chap. 2`
-            let nbrChap = $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g, '').split(' ')[1];
-            const chapNum = parseFloat(nbrChap);
-            const timeStr = $("td.table__date", elem).first().text().trim().split('\n')[0].split('.');
-            let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]));
-            let lang = paperback_extensions_common_1.LanguageCode.FRENCH;
-            chapters.push(createChapter({
-                id,
-                mangaId,
-                name,
-                chapNum,
-                langCode: lang,
-                time
-            }));
-            nbrline--;
+        let numberOfChap;
+        if ($someChapter) {
+            numberOfChap = $someChapter("#dropdownMenuOffset+ul li").length;
+        }
+        if (numberOfChap != undefined && chaptersHTML.length < numberOfChap) {
+            let $chapters = $someChapter("#dropdownMenuOffset+ul li").toArray();
+            $chapters.forEach(chapter => {
+                let id = $someChapter("a", chapter).attr("href").split('/manga')[1];
+                let urlSplited = $someChapter("a", chapter).attr("href").split('/');
+                let chapNum = parseFloat(urlSplited[urlSplited.length - 1]);
+                let time = new Date();
+                let name = '';
+                let lang = paperback_extensions_common_1.LanguageCode.FRENCH;
+                chapters.push(createChapter({
+                    id,
+                    mangaId,
+                    name,
+                    chapNum,
+                    langCode: lang,
+                    time
+                }));
+            });
+        }
+        else {
+            let nbrline = chaptersHTML.length;
+            for (const elem of chaptersHTML) {
+                const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''));
+                const name = ''; // $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,''); // Convert `\nChap.      \n2      \n  \n` -> `Chap. 2`
+                let nbrChap = $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g, '').split(' ')[1];
+                const chapNum = parseFloat(nbrChap);
+                const timeStr = $("td.table__date", elem).first().text().trim().split('\n')[0].split('.');
+                let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]));
+                let lang = paperback_extensions_common_1.LanguageCode.FRENCH;
+                chapters.push(createChapter({
+                    id,
+                    mangaId,
+                    name,
+                    chapNum,
+                    langCode: lang,
+                    time
+                }));
+                nbrline--;
+            }
         }
     }
     else {

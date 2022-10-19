@@ -32,7 +32,7 @@ export const parseMangaDetails = ($: CheerioStatic, mangaId: string): Manga => {
     return manga
 }
 
-export const parseChapters = ($: CheerioStatic, mangaId: string, langFr: boolean): Chapter[] => {  //work
+export const parseChapters = ($: CheerioStatic, mangaId: string, langFr: boolean, $someChapter: CheerioStatic | undefined): Chapter[] => {  //work
     const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => {return $(elem) })
     const chapters: Chapter[] = []
 
@@ -40,25 +40,52 @@ export const parseChapters = ($: CheerioStatic, mangaId: string, langFr: boolean
     const isLicenced = $("div[class*=ribbon__licensed]").text();
 
     if(isLicenced.length == 0) {
-        let nbrline = chaptersHTML.length
-        for (const elem of chaptersHTML) {
-        const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''))
-        const name = '';// $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,''); // Convert `\nChap.      \n2      \n  \n` -> `Chap. 2`
-        let nbrChap = $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,'').split(' ')[1]
-        const chapNum = parseFloat(nbrChap)
-        const timeStr = $("td.table__date", elem).first().text().trim().split('\n')[0].split('.');
-        let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]))
-        let lang = LanguageCode.FRENCH
+        let numberOfChap: number | undefined;
+        if ($someChapter) {
+            numberOfChap = $someChapter("#dropdownMenuOffset+ul li").length
+        }
 
-        chapters.push(createChapter({
-            id,
-            mangaId,
-            name,
-            chapNum,
-            langCode: lang,
-            time
-        }))
-        nbrline--
+        if (numberOfChap != undefined && chaptersHTML.length < numberOfChap) {
+            let $chapters = $someChapter!("#dropdownMenuOffset+ul li").toArray()
+            $chapters.forEach(chapter => {
+                let id = $someChapter!("a", chapter).attr("href")!.split('/manga')[1]
+                let urlSplited = $someChapter!("a", chapter).attr("href")!.split('/')
+                let chapNum = parseFloat(urlSplited![urlSplited!.length - 1]);
+                let time = new Date();
+                let name = '';
+                let lang = LanguageCode.FRENCH
+
+                chapters.push(createChapter({
+                    id,
+                    mangaId,
+                    name,
+                    chapNum,
+                    langCode: lang,
+                    time
+                }))
+            });
+
+        } else {
+            let nbrline = chaptersHTML.length
+            for (const elem of chaptersHTML) {
+            const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''))
+            const name = '';// $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,''); // Convert `\nChap.      \n2      \n  \n` -> `Chap. 2`
+            let nbrChap = $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,'').split(' ')[1]
+            const chapNum = parseFloat(nbrChap)
+            const timeStr = $("td.table__date", elem).first().text().trim().split('\n')[0].split('.');
+            let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]))
+            let lang = LanguageCode.FRENCH
+
+            chapters.push(createChapter({
+                id,
+                mangaId,
+                name,
+                chapNum,
+                langCode: lang,
+                time
+            }))
+            nbrline--
+            }
         }
     } else {
         chapters.push(createChapter({
@@ -70,8 +97,6 @@ export const parseChapters = ($: CheerioStatic, mangaId: string, langFr: boolean
             time: new Date()
         }))
     }
-
-
     return chapters;
 }
 

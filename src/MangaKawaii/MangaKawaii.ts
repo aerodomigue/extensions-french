@@ -21,10 +21,10 @@ import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetail
 import { ML_DOMAIN } from "./UrlMangaKawaii"
 
 const method = 'GET'
-const headers = { "content-type": "application/x-www-form-urlencoded", "accept-language" : "fr"}
+const headers = { "content-type": "application/x-www-form-urlencoded", "accept-language" : "fr", 'referer': `${ML_DOMAIN}/`}
 
 export const MangaKawaiiInfo: SourceInfo = {
-  version: 'Stable:1.0.55',
+  version: 'Stable:1.0.56',
   name: 'MangaKawaii',
   icon: 'icon.png',
   author: 'aerodomigue',
@@ -110,7 +110,18 @@ export class MangaKawaii extends Source {
     // const lang = requestChapter.url.includes('/fr/') ? true : false
 
     const $ = this.cheerio.load(response.data)
-    return parseChapters($, mangaId, true)
+    if ($(".table__chapter > a").length > 0) {
+      let someChapter = $($(".table__chapter > a").get(0)).attr('href');
+      const requestChapter = createRequestObject({
+            url: `${ML_DOMAIN}${someChapter}`,
+            method,
+            headers,
+            })
+      response = await this.requestManager.schedule(requestChapter, 3)
+      const $someChapter = this.cheerio.load(response.data)
+      return parseChapters($, mangaId, true, $someChapter)
+    }
+    return parseChapters($, mangaId, true, undefined)
   }
 
   async getChapterDetails(mangaId: string, chapterId: string): Promise<ChapterDetails> {

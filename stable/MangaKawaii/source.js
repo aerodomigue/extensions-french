@@ -394,7 +394,7 @@ const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded", "accept-language": "fr" };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.53',
+    version: 'Stable:1.0.54',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -593,24 +593,38 @@ exports.parseMangaDetails = parseMangaDetails;
 const parseChapters = ($, mangaId, langFr) => {
     const chaptersHTML = $('tr[class*=volume-]:has(td)').toArray().map((elem) => { return $(elem); });
     const chapters = [];
-    let nbrline = chaptersHTML.length;
-    for (const elem of chaptersHTML) {
-        const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''));
-        const name = $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g, ''); // Convert `\nChap.      \n2      \n  \n` -> `Chap. 2`
-        let nbrChap = name.split(' ')[1];
-        const chapNum = parseFloat(nbrChap + nbrline);
-        const timeStr = $("td.table__date", elem).first().text().trim().split('\n')[0].split('.');
-        let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]));
-        let lang = paperback_extensions_common_1.LanguageCode.FRENCH;
+    // Check if is licenced
+    const isLicenced = $("div[class*=ribbon__licensed]").text();
+    if (isLicenced.length == 0) {
+        let nbrline = chaptersHTML.length;
+        for (const elem of chaptersHTML) {
+            const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''));
+            const name = ''; // $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,''); // Convert `\nChap.      \n2      \n  \n` -> `Chap. 2`
+            let nbrChap = $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g, '').split(' ')[1];
+            const chapNum = parseFloat(nbrChap + nbrline);
+            const timeStr = $("td.table__date", elem).first().text().trim().split('\n')[0].split('.');
+            let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]));
+            let lang = paperback_extensions_common_1.LanguageCode.FRENCH;
+            chapters.push(createChapter({
+                id,
+                mangaId,
+                name,
+                chapNum,
+                langCode: lang,
+                time
+            }));
+            nbrline--;
+        }
+    }
+    else {
         chapters.push(createChapter({
-            id,
+            id: mangaId + '/fr/0',
             mangaId,
-            name,
-            chapNum,
-            langCode: lang,
-            time
+            name: "L'oeuvre est licencié, tous les chapitres ont été retirés.",
+            chapNum: 0,
+            langCode: paperback_extensions_common_1.LanguageCode.FRENCH,
+            time: new Date()
         }));
-        nbrline--;
     }
     return chapters;
 };

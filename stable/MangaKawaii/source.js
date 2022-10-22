@@ -389,12 +389,13 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MangaKawaii = exports.MangaKawaiiInfo = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
+const MangaKawaiiHelper_1 = require("./MangaKawaiiHelper");
 const MangaKawaiiParsing_1 = require("./MangaKawaiiParsing");
 const UrlMangaKawaii_1 = require("./UrlMangaKawaii");
 const method = 'GET';
 const headers = { "content-type": "application/x-www-form-urlencoded", "accept-language": "fr", 'referer': `${UrlMangaKawaii_1.ML_DOMAIN}/` };
 exports.MangaKawaiiInfo = {
-    version: 'Stable:1.0.56',
+    version: 'Stable:1.0.58',
     name: 'MangaKawaii',
     icon: 'icon.png',
     author: 'aerodomigue',
@@ -482,6 +483,9 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
                 const $someChapter = this.cheerio.load(response.data);
                 return (0, MangaKawaiiParsing_1.parseChapters)($, mangaId, true, $someChapter);
             }
+            let stateManager = createSourceStateManager({});
+            const languages = yield (0, MangaKawaiiHelper_1.getLanguages)(stateManager);
+            console.log("lang", languages);
             return (0, MangaKawaiiParsing_1.parseChapters)($, mangaId, true, undefined);
         });
     }
@@ -567,7 +571,27 @@ class MangaKawaii extends paperback_extensions_common_1.Source {
 }
 exports.MangaKawaii = MangaKawaii;
 
-},{"./MangaKawaiiParsing":49,"./UrlMangaKawaii":50,"paperback-extensions-common":5}],49:[function(require,module,exports){
+},{"./MangaKawaiiHelper":49,"./MangaKawaiiParsing":50,"./UrlMangaKawaii":51,"paperback-extensions-common":5}],49:[function(require,module,exports){
+"use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getLanguages = void 0;
+const paperback_extensions_common_1 = require("paperback-extensions-common");
+const getLanguages = (stateManager) => __awaiter(void 0, void 0, void 0, function* () {
+    var _a;
+    return (_a = (yield stateManager.retrieve('languages'))) !== null && _a !== void 0 ? _a : paperback_extensions_common_1.LanguageCode.FRENCH;
+});
+exports.getLanguages = getLanguages;
+
+},{"paperback-extensions-common":5}],50:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseHomeSections = exports.parseTags = exports.parseSearch = exports.searchMetadata = exports.parseUpdatedManga = exports.parseChapterDetails = exports.parseChapters = exports.parseMangaDetails = void 0;
@@ -631,7 +655,6 @@ const parseChapters = ($, mangaId, langFr, $someChapter) => {
             });
         }
         else {
-            let nbrline = chaptersHTML.length;
             for (const elem of chaptersHTML) {
                 const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''));
                 const name = ''; // $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,''); // Convert `\nChap.      \n2      \n  \n` -> `Chap. 2`
@@ -648,7 +671,6 @@ const parseChapters = ($, mangaId, langFr, $someChapter) => {
                     langCode: lang,
                     time
                 }));
-                nbrline--;
             }
         }
     }
@@ -805,7 +827,7 @@ function dictParser(titleArrat, urlArray) {
     return dict;
 }
 
-},{"./UrlMangaKawaii":50,"paperback-extensions-common":5}],50:[function(require,module,exports){
+},{"./UrlMangaKawaii":51,"paperback-extensions-common":5}],51:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.CDN_URL = exports.ML_DOMAIN = void 0;

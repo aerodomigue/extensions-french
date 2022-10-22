@@ -15,8 +15,11 @@ import {
   ContentRating,
   RequestManager,
   Request,
-  Response
+  Response,
+  SourceStateManager,
+  LanguageCode
 } from "paperback-extensions-common"
+import { getLanguages } from "./MangaKawaiiHelper"
 import { parseChapterDetails, parseChapters, parseHomeSections, parseMangaDetails, parseSearch, parseTags, parseUpdatedManga, searchMetadata } from "./MangaKawaiiParsing"
 import { ML_DOMAIN } from "./UrlMangaKawaii"
 
@@ -24,7 +27,7 @@ const method = 'GET'
 const headers = { "content-type": "application/x-www-form-urlencoded", "accept-language" : "fr", 'referer': `${ML_DOMAIN}/`}
 
 export const MangaKawaiiInfo: SourceInfo = {
-  version: 'Stable:1.0.56',
+  version: 'Stable:1.0.58',
   name: 'MangaKawaii',
   icon: 'icon.png',
   author: 'aerodomigue',
@@ -121,6 +124,11 @@ export class MangaKawaii extends Source {
       const $someChapter = this.cheerio.load(response.data)
       return parseChapters($, mangaId, true, $someChapter)
     }
+
+    let stateManager = createSourceStateManager({});
+    const languages: string[] = await getLanguages(stateManager)
+    console.log("lang", languages)
+
     return parseChapters($, mangaId, true, undefined)
   }
 

@@ -66,25 +66,23 @@ export const parseChapters = ($: CheerioStatic, mangaId: string, langFr: boolean
             });
 
         } else {
-            let nbrline = chaptersHTML.length
             for (const elem of chaptersHTML) {
-            const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''))
-            const name = '';// $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,''); // Convert `\nChap.      \n2      \n  \n` -> `Chap. 2`
-            let nbrChap = $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,'').split(' ')[1]
-            const chapNum = parseFloat(nbrChap)
-            const timeStr = $("td.table__date", elem).first().text().trim().split('\n')[0].split('.');
-            let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]))
-            let lang = LanguageCode.FRENCH
+                const id = encodeURI(`${$('a[href*=manga]', elem).attr('href')}`.replace('/manga', ''))
+                const name = '';// $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,''); // Convert `\nChap.      \n2      \n  \n` -> `Chap. 2`
+                let nbrChap = $("a span", elem).text().trim().replace(/(\r\n|\n|\r)/gm, "").replace(/ +(?= )/g,'').split(' ')[1]
+                const chapNum = parseFloat(nbrChap)
+                const timeStr = $("td.table__date", elem).first().text().trim().split('\n')[0].split('.');
+                let time = new Date(Date.parse(timeStr[1] + '-' + timeStr[0] + '-' + timeStr[2]))
+                let lang = LanguageCode.FRENCH
 
-            chapters.push(createChapter({
-                id,
-                mangaId,
-                name,
-                chapNum,
-                langCode: lang,
-                time
-            }))
-            nbrline--
+                chapters.push(createChapter({
+                    id,
+                    mangaId,
+                    name,
+                    chapNum,
+                    langCode: lang,
+                    time
+                }))
             }
         }
     } else {
